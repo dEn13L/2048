@@ -6,8 +6,6 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.TableRow;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -25,8 +23,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @SmallTest
     public void test() {
         Model model = new Model(getContext(), 1080);
-        int cellMarginPx = model.getCellMarginPx();
-        int innerCellPx = model.getInnerCellPx();
+        int cellMarginPx = model.getCellMargin();
+        int innerCellPx = model.getInnerCellWidth();
 
         ArrayList<Cell> cells = new ArrayList<>();
         for (int i = 0; i < CELLS_COUNT_IN_ROW; i++) {
@@ -36,6 +34,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 cells.add(cell);
             }
         }
-        model.initCells(cells);
+        model.initValues(cells);
     }
 }

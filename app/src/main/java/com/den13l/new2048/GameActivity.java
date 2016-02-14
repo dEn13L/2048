@@ -1,13 +1,19 @@
 package com.den13l.new2048;
 
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.GridView;
+import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by erdenierdyneev on 13.02.16.
@@ -15,46 +21,120 @@ import java.util.ArrayList;
 public class GameActivity extends AppCompatActivity {
 
     public static final String TAG = "DENI";
-    
-    private TableLayout tableLayout;
-    private Model model;
+
+    private GestureDetectorCompat detector;
+    private List<Value> values;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.tableLayout = (TableLayout) findViewById(R.id.board);
+        detector = new GestureDetectorCompat(this, new MyGestureListener());
 
-        int widthPx = Utils.getDeviceWidth(this);
-        this.model = new Model(this, widthPx);
-
-        int cellPx = model.getCellPx();
-        int cellMarginPx = model.getCellMarginPx();
-        int innerCellPx = model.getInnerCellPx();
+        Model model = new Model(Utils.getDeviceWidth(this));
+        int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInRow();
 
-        Log.i(TAG, "widthPx      = " + widthPx);
-        Log.i(TAG, "cellPx       = " + cellPx);
-        Log.i(TAG, "cellMarginPx = " + cellMarginPx);
-        Log.i(TAG, "innerCellPx  = " + innerCellPx);
-
-        ArrayList<Cell> cells = new ArrayList<>();
-        for (int i = 0; i < model.getCellsCountInRow(); i++) {
-            TableRow row = new TableRow(this);
-            tableLayout.addView(row);
-            for (int j = 0; j < model.getCellsCountInRow(); j++) {
-                Cell cell = new Cell(this, i, j, cellMarginPx, cellsCountInRow);
-                cell.setLayoutParams(new TableRow.LayoutParams(innerCellPx, innerCellPx));
-                cells.add(cell);
-
-                row.addView(cell);
+        GridView board = (GridView) findViewById(R.id.board);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) board.getLayoutParams();
+        params.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
+        board.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                detector.onTouchEvent(event);
+                return false;
             }
+        });
+
+        CellAdapter cellAdapter = new CellAdapter(this, model);
+        board.setAdapter(cellAdapter);
+        board.setNumColumns(cellsCountInRow);
+
+        List<Cell> cells = cellAdapter.getCells();
+        values = model.initValues(cells);
+        for (Value value : values) {
+//            board.addView(value);
         }
-        model.initCells(cells);
+
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        detector.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
+                               float velocityX, float velocityY) {
+
+            float diffY = event2.getY() - event1.getY();
+            float diffX = event2.getX() - event1.getX();
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight();
+                    } else {
+                        onSwipeLeft();
+                    }
+                }
+            } else {
+                if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffY > 0) {
+                        onSwipeBottom();
+                    } else {
+                        onSwipeTop();
+                    }
+                }
+            }
+            return true;
+        }
+
+        private void onSwipeLeft() {
+            Log.d(TAG, "left swipe");
+            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_left);
+            for (Cell cell : values) {
+                cell.startAnimation(animation);
+            }
+        }
+
+        private void onSwipeRight() {
+            Log.d(TAG, "right swipe");
+            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_right);
+            for (Cell cell : values) {
+                cell.startAnimation(animation);
+            }
+        }
+
+        private void onSwipeTop() {
+            Log.d(TAG, "top swipe");
+            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_top);
+            for (Cell cell : values) {
+                cell.startAnimation(animation);
+            }
+        }
+
+        private void onSwipeBottom() {
+            Log.d(TAG, "bottom swipe");
+            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_bottom);
+            for (Cell cell : values) {
+                cell.startAnimation(animation);
+            }
+        }
+    }
 }

@@ -1,7 +1,5 @@
 package com.den13l.new2048;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,26 +13,32 @@ public class Model {
     private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
 
-    private Context context;
-    private int widthPx;
-    private int cellPx;
+    private int cellWidth;
+    private int cellMargin;
+    private int boardWidth;
 
-    public Model(Context context, int widthPx) {
-        this.context = context;
-        this.widthPx = widthPx;
-        this.cellPx = widthPx / CELLS_COUNT_IN_ROW;
+    public Model(int deviceWidth) {
+        int idealCellWidth = deviceWidth / CELLS_COUNT_IN_ROW;
+
+        this.cellMargin = idealCellWidth / 10;
+        this.boardWidth = deviceWidth - 2 * cellMargin;
+        this.cellWidth = boardWidth / CELLS_COUNT_IN_ROW;
     }
 
-    public int getCellPx() {
-        return cellPx;
+    public int getCellWidth() {
+        return cellWidth;
     }
 
-    public int getCellMarginPx() {
-        return cellPx / 10;
+    public int getCellMargin() {
+        return cellMargin;
     }
 
-    public int getInnerCellPx() {
-        return (widthPx - getCellMarginPx() * (CELLS_COUNT_IN_ROW + 1)) / CELLS_COUNT_IN_ROW;
+    public int getBoardWidth() {
+        return boardWidth;
+    }
+
+    public int getInnerCellWidth() {
+        return (boardWidth - getCellMargin() * (CELLS_COUNT_IN_ROW + 1)) / CELLS_COUNT_IN_ROW;
     }
 
     public int getCellsCountInRow() {
@@ -49,23 +53,23 @@ public class Model {
         return INITIAL_SCALE;
     }
 
-    public List<Cell> initCells(ArrayList<Cell> cells) {
+    public List<Value> initValues(List<Cell> cells) {
         int i = 0;
-        ArrayList<Cell> initCells = new ArrayList<>();
-        while(i < INITIATED_CELLS) {
-            Cell initCell = initCell(cells);
-            if (!isCellInit(initCells, initCell)) {
-                initCells.add(initCell);
+        List<Value> values = new ArrayList<>();
+        while (i < INITIATED_CELLS) {
+            Value value = initValue(cells);
+            if (!isValueInit(values, value)) {
+                values.add(value);
                 i++;
             }
         }
-        return initCells;
+        return values;
     }
 
-    private boolean isCellInit(ArrayList<Cell> initCells, Cell initCell) {
+    private boolean isValueInit(List<Value> values, Value value) {
         boolean init = false;
-        for (Cell cell : initCells) {
-            if (cell.equals(initCell)) {
+        for (Value v : values) {
+            if (v.equals(value)) {
                 init = true;
                 break;
             }
@@ -73,21 +77,19 @@ public class Model {
         return init;
     }
 
-    private Cell initCell(ArrayList<Cell> cells) {
-        Cell initCell = null;
+    private Value initValue(List<Cell> cells) {
+        Value value = null;
         int random = new Random().nextInt(CELLS_COUNT_IN_ROW * CELLS_COUNT_IN_ROW);
         for (Cell cell : cells) {
-            int i = cell.getI();
-            int j = cell.getJ();
-            int position = i * CELLS_COUNT_IN_ROW + j;
+            int position = cell.getPosition();
             if (random == position) {
                 int pow = new Random().nextInt(INITIAL_SCALE) + 1;
-                int value = (int) Math.pow(2, pow);
-                cell.setText(String.valueOf(value));
-                initCell = cell;
+                int number = (int) Math.pow(2, pow);
+                value = new Value(cell);
+                value.setNumber(number);
                 break;
             }
         }
-        return initCell;
+        return value;
     }
 }
