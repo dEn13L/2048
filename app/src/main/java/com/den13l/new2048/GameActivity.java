@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
@@ -23,7 +21,9 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private List<Cell> cellList;
+    private List<Cell> initCells;
+    private List<Cell> cells;
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,7 @@ public class GameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         detector = new GestureDetectorCompat(this, new MyGestureListener());
-
-        Model model = new Model(Utils.getDeviceWidth(this));
+        model = new Model(Utils.getDeviceWidth(this));
         int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInRow();
 
@@ -67,8 +66,8 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        List<Cell> cells = valueAdapter.getCells();
-        cellList = model.initValues(cells);
+        cells = valueAdapter.getCells();
+        initCells = model.initCells(cells);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
@@ -77,6 +76,26 @@ public class GameActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         detector.onTouchEvent(event);
         return super.onTouchEvent(event);
+    }
+
+    private void onSwipeLeft() {
+        Log.d(TAG, "left swipe");
+        model.onSwipeLeft(this, initCells, cells);
+    }
+
+    private void onSwipeRight() {
+        Log.d(TAG, "right swipe");
+        model.onSwipeRight(this, initCells);
+    }
+
+    private void onSwipeTop() {
+        Log.d(TAG, "top swipe");
+        model.onSwipeTop(this, initCells);
+    }
+
+    private void onSwipeBottom() {
+        Log.d(TAG, "bottom swipe");
+        model.onSwipeBottom(this, initCells);
     }
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -113,38 +132,6 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
             return true;
-        }
-
-        private void onSwipeLeft() {
-            Log.d(TAG, "left swipe");
-            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_left);
-            for (Cell cell : cellList) {
-                cell.startAnimation(animation);
-            }
-        }
-
-        private void onSwipeRight() {
-            Log.d(TAG, "right swipe");
-            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_right);
-            for (Cell cell : cellList) {
-                cell.startAnimation(animation);
-            }
-        }
-
-        private void onSwipeTop() {
-            Log.d(TAG, "top swipe");
-            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_top);
-            for (Cell cell : cellList) {
-                cell.startAnimation(animation);
-            }
-        }
-
-        private void onSwipeBottom() {
-            Log.d(TAG, "bottom swipe");
-            Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_bottom);
-            for (Cell cell : cellList) {
-                cell.startAnimation(animation);
-            }
         }
     }
 }

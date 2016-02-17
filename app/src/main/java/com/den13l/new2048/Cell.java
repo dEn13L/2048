@@ -20,7 +20,7 @@ public class Cell extends RelativeLayout {
     protected RelativeLayout paddingCell;
     private Model model;
     private int cellsCountInRow;
-    private int position;
+    protected int position;
 
     public Cell(Cell cell) {
         this(cell.getContext(), cell.getPosition(), cell.getModel());
@@ -65,6 +65,11 @@ public class Cell extends RelativeLayout {
                 setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "P " + position;
     }
 
     @Override

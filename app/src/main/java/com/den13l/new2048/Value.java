@@ -30,6 +30,11 @@ public class Value extends Cell {
         paddingCell.addView(textView);
     }
 
+    @Override
+    public String toString() {
+        return "P" + position + ":N" + textView.getText();
+    }
+
     public void setNumber(int number) {
         textView.setText(String.valueOf(number));
         switch (number) {
@@ -46,5 +51,10 @@ public class Value extends Cell {
             default:
                 setBackgroundColor(Color.parseColor("#000000"));
         }
+    }
+
+    public int getNumber() {
+        return Integer.parseInt((String) textView.getText());
+
     }
 }
