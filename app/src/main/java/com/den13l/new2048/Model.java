@@ -8,6 +8,7 @@ import java.util.Random;
  * Created by erdenierdyneev on 13.02.16.
  */
 public class Model {
+    public static final String TAG = "DENI";
 
     private final int CELLS_COUNT_IN_ROW = 4;
     private final int INITIATED_CELLS = 2;
@@ -53,23 +54,23 @@ public class Model {
         return INITIAL_SCALE;
     }
 
-    public List<Value> initValues(List<Cell> cells) {
+    public List<Cell> initValues(List<Cell> cells) {
         int i = 0;
-        List<Value> values = new ArrayList<>();
+        List<Cell> initCell = new ArrayList<>();
         while (i < INITIATED_CELLS) {
-            Value value = initValue(cells);
-            if (!isValueInit(values, value)) {
-                values.add(value);
+            Cell cell = initCell(cells);
+            if (!isCellInit(initCell, cell)) {
+                initCell.add(cell);
                 i++;
             }
         }
-        return values;
+        return initCell;
     }
 
-    private boolean isValueInit(List<Value> values, Value value) {
+    private boolean isCellInit(List<Cell> cells, Cell cell) {
         boolean init = false;
-        for (Value v : values) {
-            if (v.equals(value)) {
+        for (Cell c : cells) {
+            if (c.equals(cell)) {
                 init = true;
                 break;
             }
@@ -77,19 +78,21 @@ public class Model {
         return init;
     }
 
-    private Value initValue(List<Cell> cells) {
-        Value value = null;
+    private Cell initCell(List<Cell> cells) {
+        Cell initCell = null;
         int random = new Random().nextInt(CELLS_COUNT_IN_ROW * CELLS_COUNT_IN_ROW);
-        for (Cell cell : cells) {
-            int position = cell.getPosition();
+        for (Cell c : cells) {
+            int position = c.getPosition();
             if (random == position) {
                 int pow = new Random().nextInt(INITIAL_SCALE) + 1;
                 int number = (int) Math.pow(2, pow);
-                value = new Value(cell);
-                value.setNumber(number);
+                initCell = c;
+                if (initCell instanceof Value) {
+                    ((Value) initCell).setNumber(number);
+                }
                 break;
             }
         }
-        return value;
+        return initCell;
     }
 }

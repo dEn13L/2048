@@ -23,7 +23,7 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private List<Value> values;
+    private List<Cell> cellList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +39,12 @@ public class GameActivity extends AppCompatActivity {
         int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInRow();
 
-        GridView board = (GridView) findViewById(R.id.board);
+        GridView board = (GridView) findViewById(R.id.cellBoard);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) board.getLayoutParams();
         params.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
+        CellAdapter cellAdapter = new CellAdapter(this, model);
+        board.setAdapter(cellAdapter);
+        board.setNumColumns(cellsCountInRow);
         board.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -50,15 +53,22 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        CellAdapter cellAdapter = new CellAdapter(this, model);
-        board.setAdapter(cellAdapter);
-        board.setNumColumns(cellsCountInRow);
+        GridView board2 = (GridView) findViewById(R.id.valueBoard);
+        RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) board2.getLayoutParams();
+        params2.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
+        ValueAdapter valueAdapter = new ValueAdapter(this, model);
+        board2.setAdapter(valueAdapter);
+        board2.setNumColumns(cellsCountInRow);
+        board2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                detector.onTouchEvent(event);
+                return false;
+            }
+        });
 
-        List<Cell> cells = cellAdapter.getCells();
-        values = model.initValues(cells);
-        for (Value value : values) {
-//            board.addView(value);
-        }
+        List<Cell> cells = valueAdapter.getCells();
+        cellList = model.initValues(cells);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
@@ -108,7 +118,7 @@ public class GameActivity extends AppCompatActivity {
         private void onSwipeLeft() {
             Log.d(TAG, "left swipe");
             Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_left);
-            for (Cell cell : values) {
+            for (Cell cell : cellList) {
                 cell.startAnimation(animation);
             }
         }
@@ -116,7 +126,7 @@ public class GameActivity extends AppCompatActivity {
         private void onSwipeRight() {
             Log.d(TAG, "right swipe");
             Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_right);
-            for (Cell cell : values) {
+            for (Cell cell : cellList) {
                 cell.startAnimation(animation);
             }
         }
@@ -124,7 +134,7 @@ public class GameActivity extends AppCompatActivity {
         private void onSwipeTop() {
             Log.d(TAG, "top swipe");
             Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_top);
-            for (Cell cell : values) {
+            for (Cell cell : cellList) {
                 cell.startAnimation(animation);
             }
         }
@@ -132,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
         private void onSwipeBottom() {
             Log.d(TAG, "bottom swipe");
             Animation animation = AnimationUtils.loadAnimation(GameActivity.this, R.anim.translate_bottom);
-            for (Cell cell : values) {
+            for (Cell cell : cellList) {
                 cell.startAnimation(animation);
             }
         }

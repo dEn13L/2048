@@ -9,10 +9,17 @@
     tools:showIn="@layout/activity_game">
 
     <GridView
-        android:id="@+id/board"
+        android:id="@+id/cellBoard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:background="#808080" />
+
+    <GridView
+        android:id="@+id/valueBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 </RelativeLayout>

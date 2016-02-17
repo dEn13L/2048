@@ -14,8 +14,8 @@ public class Value extends Cell {
 
     private TextView textView;
 
-    public Value(Cell cell) {
-        this(cell.getContext(), cell.getPosition(), cell.getModel());
+    public Value(Value value) {
+        this(value.getContext(), value.getPosition(), value.getModel());
     }
 
     public Value(Context context, int position, Model model) {
@@ -34,7 +34,7 @@ public class Value extends Cell {
         textView.setText(String.valueOf(number));
         switch (number) {
             case 0:
-                setBackgroundColor(Color.parseColor(Cell.CELL_COLOR));
+                setBackgroundColor(Color.TRANSPARENT);
                 textView.setText("");
                 break;
             case 2:

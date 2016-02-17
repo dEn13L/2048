@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +14,21 @@ import java.util.List;
  */
 public class CellAdapter extends BaseAdapter {
 
-    private Model model;
-    private List<Cell> cells;
+    protected List<Cell> cells;
+    protected int count;
+    protected Context context;
+    protected Model model;
 
     public CellAdapter(Context context, Model model) {
+        this.context = context;
         this.model = model;
         this.cells = new ArrayList<>();
-        for(int i = 0; i < getCount(); i++) {
+        this.count = (int) Math.pow(model.getCellsCountInRow(), 2);
+        initCells();
+    }
+
+    protected void initCells() {
+        for (int i = 0; i < getCount(); i++) {
             Cell cell = new Cell(context, i, model);
             cell.setBackgroundColor(Color.parseColor(Cell.CELL_COLOR));
             cells.add(cell);
@@ -30,13 +37,15 @@ public class CellAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return (int) Math.pow(model.getCellsCountInRow(), 2);
+        return count;
     }
 
+    @Override
     public Object getItem(int position) {
         return null;
     }
 
+    @Override
     public long getItemId(int position) {
         return 0;
     }
