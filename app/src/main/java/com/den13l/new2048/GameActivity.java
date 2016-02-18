@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,8 +22,7 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private List<Cell> initCells;
-    private List<Cell> cells;
+    private ArrayList<Value> values;
     private Model model;
 
     @Override
@@ -66,8 +66,8 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        cells = valueAdapter.getCells();
-        initCells = model.initCells(cells);
+        values = valueAdapter.getValues();
+        model.initValues(values);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
@@ -80,22 +80,22 @@ public class GameActivity extends AppCompatActivity {
 
     private void onSwipeLeft() {
         Log.d(TAG, "left swipe");
-        model.onSwipeLeft(this, initCells, cells);
+        model.onSwipeLeft(this, values);
     }
 
     private void onSwipeRight() {
         Log.d(TAG, "right swipe");
-        model.onSwipeRight(this, initCells);
+//        model.onSwipeRight(this, initValues);
     }
 
     private void onSwipeTop() {
         Log.d(TAG, "top swipe");
-        model.onSwipeTop(this, initCells);
+//        model.onSwipeTop(this, initValues);
     }
 
     private void onSwipeBottom() {
         Log.d(TAG, "bottom swipe");
-        model.onSwipeBottom(this, initCells);
+//        model.onSwipeBottom(this, initValues);
     }
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {

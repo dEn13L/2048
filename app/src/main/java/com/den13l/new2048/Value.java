@@ -54,7 +54,12 @@ public class Value extends Cell {
     }
 
     public int getNumber() {
-        return Integer.parseInt((String) textView.getText());
+        int number = 0;
+        try {
+            number = Integer.parseInt((String) textView.getText());
+        } catch (NumberFormatException ignored) {
+        }
+        return number;
 
     }
 }

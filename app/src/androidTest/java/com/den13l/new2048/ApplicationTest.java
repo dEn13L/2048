@@ -34,6 +34,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 cells.add(cell);
             }
         }
-        model.initCells(cells);
+        model.initValues(cells);
     }
 }

@@ -24,10 +24,6 @@ public class CellAdapter extends BaseAdapter {
         this.model = model;
         this.cells = new ArrayList<>();
         this.count = (int) Math.pow(model.getCellsCountInRow(), 2);
-        initCells();
-    }
-
-    protected void initCells() {
         for (int i = 0; i < getCount(); i++) {
             Cell cell = new Cell(context, i, model);
             cell.setBackgroundColor(Color.parseColor(Cell.CELL_COLOR));
