@@ -25,10 +25,17 @@ public class Model {
     private final int CELLS_COUNT_IN_LINE = 4;
     private final int INITIATED_CELLS = 5;
     private final int INITIAL_SCALE = 2;
-    Comparator<Cell> comp = new Comparator<Cell>() {
+    Comparator<Cell> straightComp = new Comparator<Cell>() {
         @Override
         public int compare(Cell a, Cell b) {
             return a.getPosition() - b.getPosition();
+        }
+    };
+
+    Comparator<Cell> backComp = new Comparator<Cell>() {
+        @Override
+        public int compare(Cell a, Cell b) {
+            return b.getPosition() - a.getPosition();
         }
     };
     private int cellWidth;
@@ -111,11 +118,7 @@ public class Model {
         return initValue;
     }
 
-    public ArrayList<Value> onSwipeLeft(Context context, ArrayList<Value> values) {
-        ArrayList<Value> modValues = (ArrayList<Value>) values.clone();
-
-        Log.d(TAG, "originValues: " + values);
-
+    private Map<Integer, List<Value>> getRowValuesMap(List<Value> values) {
         Map<Integer, List<Value>> valuesMap = new HashMap<>();
         for (Value value : values) {
             int row = getRow(value.getPosition());
@@ -126,66 +129,229 @@ public class Model {
             }
             v.add(value);
         }
+        return valuesMap;
+    }
 
-        Set<Map.Entry<Integer, List<Value>>> entries = valuesMap.entrySet();
-        for (Map.Entry<Integer, List<Value>> entry : entries) {
-            List<Value> lineValues = entry.getValue();
-            Collections.sort(lineValues, comp);
+    private Map<Integer, List<Value>> getColumnValuesMap(List<Value> values) {
+        Map<Integer, List<Value>> valuesMap = new HashMap<>();
+        for (Value value : values) {
+            int row = getColumn(value.getPosition());
+            List<Value> v = valuesMap.get(row);
+            if (v == null) {
+                v = new ArrayList<>();
+                valuesMap.put(row, v);
+            }
+            v.add(value);
+        }
+        return valuesMap;
+    }
+
+    public void onSwipeLeft(List<Value> values, SwipeEndListener swipeEndListener) {
+        Log.d(TAG, "values: " + values);
+
+        Map<Integer, List<Value>> rowValuesMap = getRowValuesMap(values);
+        Set<Map.Entry<Integer, List<Value>>> rowEntries = rowValuesMap.entrySet();
+        ShiftListener sshiftListener = null;
+        for (Map.Entry<Integer, List<Value>> rowEntry : rowEntries) {
+            List<Value> rowValues = rowEntry.getValue();
+            Collections.sort(rowValues, straightComp);
+            Log.d(TAG, "rowValues: " + rowValues);
             int shift = 0;
-            for (Value value : lineValues) {
+            for (Value value : rowValues) {
                 if (value.getNumber() == 0) {
                     shift++;
                 } else if (shift > 0) {
                     Value destValue = null;
-                    for (Value v : lineValues) {
+                    for (Value v : rowValues) {
                         if (v.getPosition() == value.getPosition() - shift) {
                             destValue = v;
                             break;
                         }
                     }
+                    Log.d(TAG, "sourceValue: " + value);
+                    Log.d(TAG, "destValue: " + destValue);
 
                     AnimationSet set = new AnimationSet(false);
                     TranslateAnimation tr = new TranslateAnimation(0, -cellWidth * shift, 0, 0);
-                    tr.setDuration(1_000);
+                    tr.setDuration(500);
                     set.addAnimation(tr);
-                    set.setAnimationListener(new ShiftListener(value, destValue));
+                    ShiftListener shiftListener = new ShiftListener(value, destValue);
+                    set.setAnimationListener(shiftListener);
                     if (destValue != null) {
-                        for (Value modValue : modValues) {
-                            int modValuePosition = modValue.getPosition();
-                            if (modValuePosition == destValue.getPosition()) {
-//                                modValue.setNumber(value.getNumber());
-                            } else if (modValuePosition == value.getPosition()) {
-//                                modValue.setNumber(0);
-                            }
-                        }
                         value.startAnimation(set);
+                        sshiftListener = shiftListener;
                     }
                 }
             }
         }
-        Log.d(TAG, "modValues   : " + modValues);
-        Log.d(TAG, "values      : " + values);
-        return modValues;
-    }
-
-    public void onSwipeTop(Context context, List<Cell> cellList) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.translate_top);
-        for (Cell cell : cellList) {
-            cell.startAnimation(animation);
+        if (sshiftListener != null) {
+            sshiftListener.setSwipeEndListener(swipeEndListener, values);
         }
     }
 
-    public void onSwipeRight(Context context, List<Cell> cellList) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.translate_right);
-        for (Cell cell : cellList) {
-            cell.startAnimation(animation);
+    public void onSwipeTop(List<Value> values, SwipeEndListener swipeEndListener) {
+        Log.d(TAG, "values: " + values);
+
+        Map<Integer, List<Value>> columnValuesMap = getColumnValuesMap(values);
+        Set<Map.Entry<Integer, List<Value>>> columnEntries = columnValuesMap.entrySet();
+        ShiftListener sshiftListener = null;
+        for (Map.Entry<Integer, List<Value>> columnEntry : columnEntries) {
+            List<Value> columnValues = columnEntry.getValue();
+            Collections.sort(columnValues, straightComp);
+            Log.d(TAG, "columnValues: " + columnValues);
+            int shift = 0;
+            for (Value value : columnValues) {
+                if (value.getNumber() == 0) {
+                    shift++;
+                } else if (shift > 0) {
+                    Value destValue = null;
+                    for (Value v : columnValues) {
+                        if (v.getPosition() == value.getPosition() - shift * CELLS_COUNT_IN_LINE) {
+                            destValue = v;
+                            break;
+                        }
+                    }
+                    Log.d(TAG, "sourceValue: " + value);
+                    Log.d(TAG, "destValue: " + destValue);
+
+                    AnimationSet set = new AnimationSet(false);
+                    TranslateAnimation tr = new TranslateAnimation(0, 0, 0, -cellWidth * shift);
+                    tr.setDuration(500);
+                    set.addAnimation(tr);
+                    ShiftListener shiftListener = new ShiftListener(value, destValue);
+                    set.setAnimationListener(shiftListener);
+                    if (destValue != null) {
+                        value.startAnimation(set);
+                        sshiftListener = shiftListener;
+                    }
+                }
+            }
+        }
+        if (sshiftListener != null) {
+            sshiftListener.setSwipeEndListener(swipeEndListener, values);
         }
     }
 
-    public void onSwipeBottom(Context context, List<Cell> cellList) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.translate_bottom);
-        for (Cell cell : cellList) {
-            cell.startAnimation(animation);
+    public void onSwipeRight(List<Value> values, SwipeEndListener swipeEndListener) {
+        Log.d(TAG, "values: " + values);
+
+        Map<Integer, List<Value>> rowValuesMap = getRowValuesMap(values);
+        Set<Map.Entry<Integer, List<Value>>> rowEntries = rowValuesMap.entrySet();
+        ShiftListener sshiftListener = null;
+        for (Map.Entry<Integer, List<Value>> rowEntry : rowEntries) {
+            List<Value> rowValues = rowEntry.getValue();
+            Collections.sort(rowValues, backComp);
+            Log.d(TAG, "rowValues: " + rowValues);
+            int shift = 0;
+            for (Value value : rowValues) {
+                if (value.getNumber() == 0) {
+                    shift++;
+                } else if (shift > 0) {
+                    Value destValue = null;
+                    for (Value v : rowValues) {
+                        if (v.getPosition() == value.getPosition() + shift) {
+                            destValue = v;
+                            break;
+                        }
+                    }
+                    Log.d(TAG, "sourceValue: " + value);
+                    Log.d(TAG, "destValue: " + destValue);
+
+                    AnimationSet set = new AnimationSet(false);
+                    TranslateAnimation tr = new TranslateAnimation(0, cellWidth * shift, 0, 0);
+                    tr.setDuration(500);
+                    set.addAnimation(tr);
+                    ShiftListener shiftListener = new ShiftListener(value, destValue);
+                    set.setAnimationListener(shiftListener);
+                    if (destValue != null) {
+                        value.startAnimation(set);
+                        sshiftListener = shiftListener;
+                    }
+                }
+            }
+        }
+        if (sshiftListener != null) {
+            sshiftListener.setSwipeEndListener(swipeEndListener, values);
+        }
+    }
+
+    public void onSwipeBottom(List<Value> values, SwipeEndListener swipeEndListener) {
+        Log.d(TAG, "values: " + values);
+
+        Map<Integer, List<Value>> columnValuesMap = getColumnValuesMap(values);
+        Set<Map.Entry<Integer, List<Value>>> columnEntries = columnValuesMap.entrySet();
+        ShiftListener sshiftListener = null;
+        for (Map.Entry<Integer, List<Value>> columnEntry : columnEntries) {
+            List<Value> columnValues = columnEntry.getValue();
+            Collections.sort(columnValues, backComp);
+            Log.d(TAG, "columnValues: " + columnValues);
+            int shift = 0;
+            for (Value value : columnValues) {
+                if (value.getNumber() == 0) {
+                    shift++;
+                } else if (shift > 0) {
+                    Value destValue = null;
+                    for (Value v : columnValues) {
+                        if (v.getPosition() == value.getPosition() + shift * CELLS_COUNT_IN_LINE) {
+                            destValue = v;
+                            break;
+                        }
+                    }
+                    Log.d(TAG, "sourceValue: " + value);
+                    Log.d(TAG, "destValue: " + destValue);
+
+                    AnimationSet set = new AnimationSet(false);
+                    TranslateAnimation tr = new TranslateAnimation(0, 0, 0, cellWidth * shift);
+                    tr.setDuration(500);
+                    set.addAnimation(tr);
+                    ShiftListener shiftListener = new ShiftListener(value, destValue);
+                    set.setAnimationListener(shiftListener);
+                    if (destValue != null) {
+                        value.startAnimation(set);
+                        sshiftListener = shiftListener;
+                    }
+                }
+            }
+        }
+        if (sshiftListener != null) {
+            sshiftListener.setSwipeEndListener(swipeEndListener, values);
+        }
+    }
+
+    private class ShiftListener implements Animation.AnimationListener {
+
+        private Value sourceValue;
+        private Value destValue;
+        private SwipeEndListener swipeEndListener;
+        private List<Value> values;
+
+        public ShiftListener(Value sourceValue, Value destValue) {
+            this.sourceValue = sourceValue;
+            this.destValue = destValue;
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            destValue.setNumber(sourceValue.getNumber());
+            sourceValue.setNumber(0);
+            if (swipeEndListener != null) {
+                swipeEndListener.onSwiped(values);
+            }
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+
+        public void setSwipeEndListener(SwipeEndListener swipeEndListener, List<Value> values) {
+            this.swipeEndListener = swipeEndListener;
+            this.values = values;
         }
     }
 
@@ -205,30 +371,4 @@ public class Model {
         return position / CELLS_COUNT_IN_LINE == line;
     }
 
-    private class ShiftListener implements Animation.AnimationListener {
-
-        private Value sourceValue;
-        private Value destValue;
-
-        public ShiftListener(Value sourceValue, Value destValue) {
-            this.sourceValue = sourceValue;
-            this.destValue = destValue;
-        }
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-
-        }
-
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            destValue.setNumber(sourceValue.getNumber());
-            sourceValue.setNumber(0);
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
-    }
 }

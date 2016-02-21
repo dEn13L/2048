@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ValueAdapter extends BaseAdapter {
 
-    protected ArrayList<Value> values;
+    protected List<Value> values;
     protected int count;
     protected Context context;
     protected Model model;
@@ -57,7 +57,7 @@ public class ValueAdapter extends BaseAdapter {
         return value;
     }
 
-    public ArrayList<Value> getValues() {
+    public List<Value> getValues() {
         return values;
     }
 }

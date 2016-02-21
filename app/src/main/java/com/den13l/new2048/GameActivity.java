@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +21,9 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private ArrayList<Value> values;
+    private List<Value> values;
     private Model model;
+    private boolean isSwiping;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,22 +80,66 @@ public class GameActivity extends AppCompatActivity {
 
     private void onSwipeLeft() {
         Log.d(TAG, "left swipe");
-        model.onSwipeLeft(this, values);
+        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+            @Override
+            public void onSwiped(List<Value> swipedValues) {
+                isSwiping = false;
+                values = swipedValues;
+                Log.d(TAG, "onSwiped");
+            }
+        };
+        if (!isSwiping) {
+            isSwiping = true;
+            model.onSwipeLeft(values, swipeEndListener);
+        }
     }
 
     private void onSwipeRight() {
         Log.d(TAG, "right swipe");
-//        model.onSwipeRight(this, initValues);
+        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+            @Override
+            public void onSwiped(List<Value> swipedValues) {
+                isSwiping = false;
+                values = swipedValues;
+                Log.d(TAG, "onSwiped");
+            }
+        };
+        if (!isSwiping) {
+            isSwiping = true;
+            model.onSwipeRight(values, swipeEndListener);
+        }
     }
 
     private void onSwipeTop() {
         Log.d(TAG, "top swipe");
-//        model.onSwipeTop(this, initValues);
+        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+            @Override
+            public void onSwiped(List<Value> swipedValues) {
+                isSwiping = false;
+                values = swipedValues;
+                Log.d(TAG, "onSwiped");
+            }
+        };
+        if (!isSwiping) {
+            isSwiping = true;
+            model.onSwipeTop(values, swipeEndListener);
+        }
     }
 
     private void onSwipeBottom() {
         Log.d(TAG, "bottom swipe");
-//        model.onSwipeBottom(this, initValues);
+        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+            @Override
+            public void onSwiped(List<Value> swipedValues) {
+                isSwiping = false;
+                values = swipedValues;
+                Log.d(TAG, "onSwiped");
+            }
+        };
+        if (!isSwiping) {
+            isSwiping = true;
+            model.onSwipeBottom(values, swipeEndListener);
+        }
     }
 
     class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
