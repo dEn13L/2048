@@ -1,7 +1,9 @@
 package com.den13l.new2048;
 
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
@@ -109,6 +111,12 @@ public class Model {
                 int number = (int) Math.pow(2, pow);
                 initValue = v;
                 initValue.setNumber(number);
+
+                ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                scaleAnimation.setDuration(500);
+
+                initValue.startAnimation(scaleAnimation);
+
                 break;
             }
         }
@@ -192,7 +200,7 @@ public class Model {
                     }
                     if (destValue != null) {
                         TranslateAnimation tr = sideShift.getTranslateAnimation(shift);
-                        tr.setDuration(500);
+                        tr.setDuration(300);
 
                         Shift shift1 = new Shift(value, destValue, tr);
                         shiftAnimation.addShift(shift1);

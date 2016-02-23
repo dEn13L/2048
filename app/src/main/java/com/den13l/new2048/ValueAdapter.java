@@ -2,6 +2,7 @@ package com.den13l.new2048;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -48,6 +49,7 @@ public class ValueAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d(GameActivity.TAG, "getView");
         Value value;
         if (convertView == null) {
             value = values.get(position);
