@@ -1,7 +1,6 @@
 package com.den13l.new2048;
 
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
@@ -77,17 +76,38 @@ public class Model {
         return INITIAL_SCALE;
     }
 
-    public List<Value> initValues(List<Value> values) {
-        int i = 0;
+    private List<Value> getInitValues(List<Value> values) {
         List<Value> initValues = new ArrayList<>();
-        while (i < INITIATED_CELLS) {
+        for (Value value : values) {
+            if (value.getNumber() != 0) {
+                initValues.add(value);
+            }
+        }
+        return initValues;
+    }
+
+    public List<Value> initValues(List<Value> values, int initCells) {
+        int i = 0;
+        List<Value> initValues = getInitValues(values);
+        while (i < initCells) {
             Value value = initValue(values);
             if (!isValueInit(initValues, value)) {
+
+                ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                scaleAnimation.setDuration(500);
+
+                value.startAnimation(scaleAnimation);
+
                 initValues.add(value);
                 i++;
             }
         }
-        return initValues;
+        return values;
+    }
+
+    public List<Value> initValues(List<Value> values) {
+        return initValues(values, INITIATED_CELLS);
     }
 
     private boolean isValueInit(List<Value> values, Value value) {
@@ -111,12 +131,6 @@ public class Model {
                 int number = (int) Math.pow(2, pow);
                 initValue = v;
                 initValue.setNumber(number);
-
-                ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                scaleAnimation.setDuration(500);
-
-                initValue.startAnimation(scaleAnimation);
-
                 break;
             }
         }

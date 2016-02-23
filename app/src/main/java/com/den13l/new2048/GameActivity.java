@@ -67,7 +67,7 @@ public class GameActivity extends AppCompatActivity {
         });
 
         values = valueAdapter.getValues();
-        model.initValues(values);
+        values = model.initValues(values);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
@@ -84,7 +84,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onSwiped(List<Value> swipedValues) {
                 isSwiping = false;
-                values = swipedValues;
+                values = model.initValues(swipedValues, 1);
                 Log.d(TAG, "onSwiped");
             }
         };
@@ -100,7 +100,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onSwiped(List<Value> swipedValues) {
                 isSwiping = false;
-                values = swipedValues;
+                values = model.initValues(swipedValues, 1);
                 Log.d(TAG, "onSwiped");
             }
         };
@@ -116,7 +116,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onSwiped(List<Value> swipedValues) {
                 isSwiping = false;
-                values = swipedValues;
+                values = model.initValues(swipedValues, 1);
                 Log.d(TAG, "onSwiped");
             }
         };
@@ -132,7 +132,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onSwiped(List<Value> swipedValues) {
                 isSwiping = false;
-                values = swipedValues;
+                values = model.initValues(swipedValues, 1);
                 Log.d(TAG, "onSwiped");
             }
         };
