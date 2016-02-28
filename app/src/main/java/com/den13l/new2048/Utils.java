@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import java.util.List;
+
 /**
  * Created by erdenierdyneev on 13.02.16.
  */
@@ -33,6 +35,17 @@ public class Utils {
 
     public static float getDestiny(Context context) {
         return context.getResources().getDisplayMetrics().density;
+    }
+
+    public static Value getValue(List<Value> values, int position) {
+        Value value = null;
+        for (Value v : values) {
+            if (v.getPosition() == position) {
+                value = v;
+                break;
+            }
+        }
+        return value;
     }
 
 }

@@ -24,10 +24,10 @@ public class ValueAdapter extends BaseAdapter {
         this.context = context;
         this.model = model;
         this.values = new ArrayList<>();
-        this.count = (int) Math.pow(model.getCellsCountInRow(), 2);
+        this.count = (int) Math.pow(model.getCellsCountInLine(), 2);
         for (int i = 0; i < getCount(); i++) {
             Value value = new Value(context, i, model);
-            value.setBackgroundColor(Color.parseColor(Cell.CELL_COLOR));
+            value.setBackgroundColor(Color.parseColor(CellView.CELL_COLOR));
             values.add(value);
         }
     }

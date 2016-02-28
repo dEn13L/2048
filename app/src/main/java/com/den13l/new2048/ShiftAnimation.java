@@ -10,35 +10,35 @@ import java.util.List;
  */
 public class ShiftAnimation {
 
-    private List<Shift> shifts;
+    private List<ValueShift> valueShifts;
     private List<Value> values;
-    private SwipeEndListener swipeEndListener;
+    private ShiftEndListener shiftEndListener;
     private ShiftDirection shiftDirection;
 
     public ShiftAnimation(List<Value> values, ShiftDirection shiftDirection) {
-        this.shifts = new ArrayList<>();
+        this.valueShifts = new ArrayList<>();
         this.values = values;
         this.shiftDirection = shiftDirection;
     }
 
-    public void addShift(Shift shift) {
-        shifts.add(shift);
+    public void addShift(ValueShift valueShift) {
+        valueShifts.add(valueShift);
     }
 
-    public void setSwipeEndListener(SwipeEndListener swipeEndListener) {
-        this.swipeEndListener = swipeEndListener;
+    public void setShiftEndListener(ShiftEndListener shiftEndListener) {
+        this.shiftEndListener = shiftEndListener;
     }
 
     public void start() {
         TranslateAnimation tr = null;
-        for (Shift shift : shifts) {
-            Value sourceValue = shift.getSourceValue();
-            tr = shift.getTr();
+        for (ValueShift valueShift : valueShifts) {
+            Value sourceValue = valueShift.getSourceValue();
+            tr = valueShift.getTr();
             sourceValue.startAnimation(tr);
         }
-        if (tr != null && swipeEndListener != null) {
-            ShiftListener shiftListener = new ShiftListener(shifts, shiftDirection);
-            shiftListener.setSwipeEndListener(values, swipeEndListener);
+        if (tr != null && shiftEndListener != null) {
+            ShiftListener shiftListener = new ShiftListener(valueShifts, shiftDirection);
+            shiftListener.setSwipeEndListener(values, shiftEndListener);
             tr.setAnimationListener(shiftListener);
         }
     }

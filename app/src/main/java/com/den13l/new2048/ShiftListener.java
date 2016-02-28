@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class ShiftListener implements Animation.AnimationListener {
 
-    private List<Shift> shifts;
+    private List<ValueShift> valueShifts;
     private List<Value> values;
-    private SwipeEndListener swipeEndListener;
+    private ShiftEndListener shiftEndListener;
 
     private List<Value> sourceZero;
     private List<Value> sourceShifted;
@@ -20,8 +20,8 @@ public class ShiftListener implements Animation.AnimationListener {
 
     private ShiftDirection shiftDirection;
 
-    public ShiftListener(List<Shift> shifts, ShiftDirection shiftDirection) {
-        this.shifts = shifts;
+    public ShiftListener(List<ValueShift> valueShifts, ShiftDirection shiftDirection) {
+        this.valueShifts = valueShifts;
         this.sourceZero = new ArrayList<>();
         this.sourceShifted = new ArrayList<>();
         this.destShifted = new ArrayList<>();
@@ -35,9 +35,9 @@ public class ShiftListener implements Animation.AnimationListener {
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        for (Shift shift : shifts) {
-            Value destValue = shift.getDestValue();
-            Value sourceValue = shift.getSourceValue();
+        for (ValueShift valueShift : valueShifts) {
+            Value destValue = valueShift.getDestValue();
+            Value sourceValue = valueShift.getSourceValue();
 
             destShifted.add(destValue);
             sourceShifted.add(sourceValue);
@@ -59,8 +59,8 @@ public class ShiftListener implements Animation.AnimationListener {
         for (Value value : sourceZero) {
             value.setNumber(0);
         }
-        if (swipeEndListener != null) {
-            swipeEndListener.onSwiped(values);
+        if (shiftEndListener != null) {
+            shiftEndListener.onShifted(values);
         }
     }
 
@@ -69,8 +69,8 @@ public class ShiftListener implements Animation.AnimationListener {
 
     }
 
-    public void setSwipeEndListener(List<Value> values, SwipeEndListener swipeEndListener) {
+    public void setSwipeEndListener(List<Value> values, ShiftEndListener shiftEndListener) {
         this.values = values;
-        this.swipeEndListener = swipeEndListener;
+        this.shiftEndListener = shiftEndListener;
     }
 }

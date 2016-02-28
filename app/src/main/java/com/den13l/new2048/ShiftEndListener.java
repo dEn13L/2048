@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by erdenierdyneev on 19.02.16.
  */
-public interface SwipeEndListener {
+public interface ShiftEndListener {
 
-    void onSwiped(List<Value> swipedValues);
+    void onShifted(List<Value> valuesAfterShift);
 }

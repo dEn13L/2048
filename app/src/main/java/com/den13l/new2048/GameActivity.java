@@ -36,7 +36,7 @@ public class GameActivity extends AppCompatActivity {
         detector = new GestureDetectorCompat(this, new MyGestureListener());
         model = new Model(Utils.getDeviceWidth(this));
         int cellMargin = model.getCellMargin();
-        int cellsCountInRow = model.getCellsCountInRow();
+        int cellsCountInRow = model.getCellsCountInLine();
 
         GridView board = (GridView) findViewById(R.id.cellBoard);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) board.getLayoutParams();
@@ -80,65 +80,65 @@ public class GameActivity extends AppCompatActivity {
 
     private void onSwipeLeft() {
         Log.d(TAG, "left swipe");
-        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+        ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onSwiped(List<Value> swipedValues) {
+            public void onShifted(List<Value> valuesAfterShift) {
                 isSwiping = false;
-                values = model.initValues(swipedValues, 1);
-                Log.d(TAG, "onSwiped");
+                values = model.initValues(valuesAfterShift, 1);
+                Log.d(TAG, "onShifted");
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeLeft(values, swipeEndListener);
-        }
-    }
-
-    private void onSwipeRight() {
-        Log.d(TAG, "right swipe");
-        SwipeEndListener swipeEndListener = new SwipeEndListener() {
-            @Override
-            public void onSwiped(List<Value> swipedValues) {
-                isSwiping = false;
-                values = model.initValues(swipedValues, 1);
-                Log.d(TAG, "onSwiped");
-            }
-        };
-        if (!isSwiping) {
-            isSwiping = true;
-            model.onSwipeRight(values, swipeEndListener);
+            model.onSwipeLeft(values, shiftEndListener);
         }
     }
 
     private void onSwipeTop() {
         Log.d(TAG, "top swipe");
-        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+        ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onSwiped(List<Value> swipedValues) {
+            public void onShifted(List<Value> valuesAfterShift) {
                 isSwiping = false;
-                values = model.initValues(swipedValues, 1);
-                Log.d(TAG, "onSwiped");
+                values = model.initValues(valuesAfterShift, 1);
+                Log.d(TAG, "onShifted");
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeTop(values, swipeEndListener);
+            model.onSwipeTop(values, shiftEndListener);
+        }
+    }
+
+    private void onSwipeRight() {
+        Log.d(TAG, "right swipe");
+        ShiftEndListener shiftEndListener = new ShiftEndListener() {
+            @Override
+            public void onShifted(List<Value> valuesAfterShift) {
+                isSwiping = false;
+                values = model.initValues(valuesAfterShift, 1);
+                Log.d(TAG, "onShifted");
+            }
+        };
+        if (!isSwiping) {
+            isSwiping = true;
+            model.onSwipeRight(values, shiftEndListener);
         }
     }
 
     private void onSwipeBottom() {
         Log.d(TAG, "bottom swipe");
-        SwipeEndListener swipeEndListener = new SwipeEndListener() {
+        ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onSwiped(List<Value> swipedValues) {
+            public void onShifted(List<Value> valuesAfterShift) {
                 isSwiping = false;
-                values = model.initValues(swipedValues, 1);
-                Log.d(TAG, "onSwiped");
+                values = model.initValues(valuesAfterShift, 1);
+                Log.d(TAG, "onShifted");
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeBottom(values, swipeEndListener);
+            model.onSwipeBottom(values, shiftEndListener);
         }
     }
 

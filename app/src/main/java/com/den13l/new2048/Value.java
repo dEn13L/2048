@@ -10,7 +10,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 /**
  * Created by erdenierdyneev on 14.02.16.
  */
-public class Value extends Cell {
+public class Value extends CellView {
 
     private TextView textView;
 
@@ -51,6 +51,10 @@ public class Value extends Cell {
             default:
                 setBackgroundColor(Color.parseColor("#000000"));
         }
+    }
+
+    public boolean hasNumber() {
+        return getNumber() != 0;
     }
 
     public int getNumber() {

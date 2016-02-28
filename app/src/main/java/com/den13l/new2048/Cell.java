@@ -1,103 +1,46 @@
 package com.den13l.new2048;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 /**
- * Created by erdenierdyneev on 13.02.16.
+ * Created by erdenierdyneev on 28.02.16.
  */
-public class Cell extends RelativeLayout {
+public class Cell {
 
-    public static final String CELL_COLOR = "#BBBBBB";
+    private int number;
+    private int position;
 
-    protected RelativeLayout paddingCell;
-    private Model model;
-    private int cellsCountInRow;
-    protected int position;
-
-    public Cell(Cell cell) {
-        this(cell.getContext(), cell.getPosition(), cell.getModel());
+    public Cell(int position) {
+        this(position, 0);
     }
 
-    public Cell(Context context, int position, Model model) {
-        super(context);
-
-        int cellPx = model.getCellWidth();
-        setLayoutParams(new AbsListView.LayoutParams(cellPx, cellPx));
-
-        this.model = model;
-        this.cellsCountInRow = model.getCellsCountInRow();
+    public Cell(int position, int number) {
         this.position = position;
-        this.paddingCell = new RelativeLayout(context);
-        this.paddingCell.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        addView(paddingCell);
-
-        int cellMarginPx = model.getCellMargin();
-        if (isFirstColumn(position)) {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx, cellMarginPx, cellMarginPx / 2, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2);
-            }
-        } else if (isLastColumn(position)) {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx, cellMarginPx, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx, cellMarginPx / 2);
-            }
-        } else {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx, cellMarginPx / 2, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2);
-            }
-        }
+        this.number = number;
     }
 
     @Override
     public String toString() {
-        return "P " + position;
+        return position + ":" + number;
     }
 
-    @Override
-    public void setBackgroundColor(int color) {
-        paddingCell.setBackgroundColor(color);
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public Model getModel() {
-        return model;
+    public boolean hasNumber() {
+        return getNumber() != 0;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public int getPosition() {
         return position;
     }
 
-    private boolean isFirstColumn(int position) {
-        return position % cellsCountInRow == 0;
-    }
-
-    private boolean isLastColumn(int position) {
-        return (position + 1) % cellsCountInRow == 0;
-    }
-
-    private boolean isFirstRaw(int position) {
-        return position / cellsCountInRow == 0;
-    }
-
-    private boolean isLastRaw(int position) {
-        return position / cellsCountInRow == cellsCountInRow - 1;
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

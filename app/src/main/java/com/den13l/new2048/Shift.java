@@ -1,5 +1,6 @@
 package com.den13l.new2048;
 
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 /**
@@ -7,25 +8,44 @@ import android.view.animation.TranslateAnimation;
  */
 public class Shift {
 
-    private Value sourceValue;
-    private Value destValue;
-    private TranslateAnimation tr;
+    private Cell sourceCell;
+    private Cell destCell;
+    private int destNumber;
 
-    Shift(Value sourceValue, Value destValue, TranslateAnimation tr) {
-        this.sourceValue = sourceValue;
-        this.destValue = destValue;
-        this.tr = tr;
+    Shift(Cell sourceCell, Cell destCell) {
+        this.sourceCell = sourceCell;
+        this.destCell = destCell;
+        this.destNumber = getSourceNumber();
     }
 
-    public Value getSourceValue() {
-        return sourceValue;
+    @Override
+    public String toString() {
+        return "Source: " + sourceCell.toString() + ", Dest: " + destCell.toString() + ", destNumber:" + destNumber;
     }
 
-    public Value getDestValue() {
-        return destValue;
+    public Cell getSourceCell() {
+        return sourceCell;
     }
 
-    public TranslateAnimation getTr() {
-        return tr;
+    public Cell getDestCell() {
+        return destCell;
+    }
+
+    public int getSourcePosition() {
+        return sourceCell.getPosition();
+    }
+
+    public int getDestPosition() {
+        return destCell.getPosition();
+    }
+
+    public int getSourceNumber() {
+        return sourceCell.getNumber();
+    }
+
+    public void setDestNumber(int destNumber) { this.destNumber = destNumber; }
+
+    public int getDestNumber() {
+        return destNumber;
     }
 }

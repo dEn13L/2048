@@ -26,14 +26,14 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         int cellMarginPx = model.getCellMargin();
         int innerCellPx = model.getInnerCellWidth();
 
-        ArrayList<Cell> cells = new ArrayList<>();
+        ArrayList<CellView> cellViews = new ArrayList<>();
         for (int i = 0; i < CELLS_COUNT_IN_ROW; i++) {
             for (int j = 0; j < CELLS_COUNT_IN_ROW; j++) {
-                Cell cell = new Cell(getContext(), i, j, cellMarginPx, CELLS_COUNT_IN_ROW);
-                cell.setLayoutParams(new TableRow.LayoutParams(innerCellPx, innerCellPx));
-                cells.add(cell);
+                CellView cellView = new CellView(getContext(), i, j, cellMarginPx, CELLS_COUNT_IN_ROW);
+                cellView.setLayoutParams(new TableRow.LayoutParams(innerCellPx, innerCellPx));
+                cellViews.add(cellView);
             }
         }
-        model.initValues(cells);
+        model.initValues(cellViews);
     }
 }

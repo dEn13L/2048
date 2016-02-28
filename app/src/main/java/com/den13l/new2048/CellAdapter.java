@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class CellAdapter extends BaseAdapter {
 
-    protected List<Cell> cells;
+    protected List<CellView> cellViews;
     protected int count;
     protected Context context;
     protected Model model;
@@ -22,12 +22,12 @@ public class CellAdapter extends BaseAdapter {
     public CellAdapter(Context context, Model model) {
         this.context = context;
         this.model = model;
-        this.cells = new ArrayList<>();
-        this.count = (int) Math.pow(model.getCellsCountInRow(), 2);
+        this.cellViews = new ArrayList<>();
+        this.count = (int) Math.pow(model.getCellsCountInLine(), 2);
         for (int i = 0; i < getCount(); i++) {
-            Cell cell = new Cell(context, i, model);
-            cell.setBackgroundColor(Color.parseColor(Cell.CELL_COLOR));
-            cells.add(cell);
+            CellView cellView = new CellView(context, i, model);
+            cellView.setBackgroundColor(Color.parseColor(CellView.CELL_COLOR));
+            cellViews.add(cellView);
         }
     }
 
@@ -47,16 +47,16 @@ public class CellAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Cell cell;
+        CellView cellView;
         if (convertView == null) {
-            cell = cells.get(position);
+            cellView = cellViews.get(position);
         } else {
-            cell = (Cell) convertView;
+            cellView = (CellView) convertView;
         }
-        return cell;
+        return cellView;
     }
 
-    public List<Cell> getCells() {
-        return cells;
+    public List<CellView> getCellViews() {
+        return cellViews;
     }
 }
