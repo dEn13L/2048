@@ -7,5 +7,5 @@ import java.util.List;
  */
 public interface ShiftEndListener {
 
-    void onShifted(List<Value> valuesAfterShift);
+    void onShifted(List<CellView> valuesAfterShift);
 }

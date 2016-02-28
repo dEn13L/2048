@@ -1,5 +1,7 @@
 package com.den13l.new2048;
 
+import android.util.Log;
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
@@ -8,21 +10,30 @@ import java.util.List;
 /**
  * Created by erdenierdyneev on 23.02.16.
  */
-public class ShiftAnimation {
+public class ShiftAnimation implements Animation.AnimationListener {
 
-    private List<ValueShift> valueShifts;
-    private List<Value> values;
+    private List<LineShift> lineShifts;
+    private List<CellView> cells;
     private ShiftEndListener shiftEndListener;
-    private ShiftDirection shiftDirection;
+    private int shiftsCount;
+    private int animatedShifts;
 
-    public ShiftAnimation(List<Value> values, ShiftDirection shiftDirection) {
-        this.valueShifts = new ArrayList<>();
-        this.values = values;
-        this.shiftDirection = shiftDirection;
+    public ShiftAnimation(List<CellView> cells) {
+        this.lineShifts = new ArrayList<>();
+        this.cells = cells;
     }
 
-    public void addShift(ValueShift valueShift) {
-        valueShifts.add(valueShift);
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (LineShift lineShift : lineShifts) {
+            stringBuilder.append(lineShift.toString());
+        }
+        return stringBuilder.toString();
+    }
+
+    public void addLineShift(LineShift lineShift) {
+        lineShifts.add(lineShift);
     }
 
     public void setShiftEndListener(ShiftEndListener shiftEndListener) {
@@ -30,16 +41,53 @@ public class ShiftAnimation {
     }
 
     public void start() {
-        TranslateAnimation tr = null;
-        for (ValueShift valueShift : valueShifts) {
-            Value sourceValue = valueShift.getSourceValue();
-            tr = valueShift.getTr();
-            sourceValue.startAnimation(tr);
+        for (LineShift lineShift : lineShifts) {
+            List<Shift> shifts = lineShift.getShiftList();
+            for (Shift shift : shifts) {
+                TranslateAnimation translateAnimation = shift.getTranslateAnimation();
+                if (translateAnimation != null) {
+                    shiftsCount++;
+                    CellView sourceCell = shift.getSourceCell();
+                    boolean hasShiftToCell = hasShiftToCell(sourceCell);
+                    ShiftListener shiftListener = new ShiftListener(shift, this, hasShiftToCell);
+                    translateAnimation.setAnimationListener(shiftListener);
+                    sourceCell.startAnimation(translateAnimation);
+                }
+            }
         }
-        if (tr != null && shiftEndListener != null) {
-            ShiftListener shiftListener = new ShiftListener(valueShifts, shiftDirection);
-            shiftListener.setSwipeEndListener(values, shiftEndListener);
-            tr.setAnimationListener(shiftListener);
+        if (shiftsCount == 0 && shiftEndListener != null) {
+            shiftEndListener.onShifted(cells);
         }
+    }
+
+    public boolean hasShiftToCell(CellView cell) {
+        for (LineShift lineShift : lineShifts) {
+            List<Shift> shifts = lineShift.getShiftList();
+            for (Shift shift : shifts) {
+                CellView destCell = shift.getDestCell();
+                if (destCell.equals(cell)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        animatedShifts++;
+        if (animatedShifts == shiftsCount && shiftEndListener != null) {
+            shiftEndListener.onShifted(cells);
+        }
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
     }
 }

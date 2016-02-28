@@ -1,6 +1,5 @@
 package com.den13l.new2048;
 
-import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
 /**
@@ -8,44 +7,56 @@ import android.view.animation.TranslateAnimation;
  */
 public class Shift {
 
-    private Cell sourceCell;
-    private Cell destCell;
+    private CellView sourceCell;
+    private CellView destCell;
+    private TranslateAnimation translateAnimation;
     private int destNumber;
 
-    Shift(Cell sourceCell, Cell destCell) {
+    Shift(CellView sourceCell, CellView destCell, int cellsCountInLine, int cellWidth) {
         this.sourceCell = sourceCell;
         this.destCell = destCell;
         this.destNumber = getSourceNumber();
+        int shiftCount = destCell.getPosition() - sourceCell.getPosition();
+        if (shiftCount != 0) {
+            if (Math.abs(shiftCount) < cellsCountInLine) {
+                // right or left shift
+                translateAnimation = new TranslateAnimation(0, cellWidth * shiftCount, 0, 0);
+                translateAnimation.setDuration(500);
+            } else {
+                // top or bottom shift
+                translateAnimation = new TranslateAnimation(0, 0, 0, cellWidth * (shiftCount / cellsCountInLine));
+                translateAnimation.setDuration(500);
+            }
+        }
+    }
+
+    public TranslateAnimation getTranslateAnimation() {
+        return translateAnimation;
     }
 
     @Override
     public String toString() {
-        return "Source: " + sourceCell.toString() + ", Dest: " + destCell.toString() + ", destNumber:" + destNumber;
+        return "Shift. Source: " + sourceCell.toString() + ", Dest: " + destCell.toString() + ", destNumber:" +
+                destNumber;
     }
 
-    public Cell getSourceCell() {
+    public CellView getSourceCell() {
         return sourceCell;
     }
 
-    public Cell getDestCell() {
+    public CellView getDestCell() {
         return destCell;
-    }
-
-    public int getSourcePosition() {
-        return sourceCell.getPosition();
-    }
-
-    public int getDestPosition() {
-        return destCell.getPosition();
     }
 
     public int getSourceNumber() {
         return sourceCell.getNumber();
     }
 
-    public void setDestNumber(int destNumber) { this.destNumber = destNumber; }
-
     public int getDestNumber() {
         return destNumber;
+    }
+
+    public void setDestNumber(int destNumber) {
+        this.destNumber = destNumber;
     }
 }

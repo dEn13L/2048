@@ -3,7 +3,6 @@ package com.den13l.new2048;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,11 +18,10 @@ import java.util.Set;
  */
 public class Model {
 
-    public static final String TAG = "DENI";
-
     private final int CELLS_COUNT_IN_LINE = 4;
-    private final int INITIATED_CELLS = 5;
+    private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
+
     Comparator<CellView> straightComp = new Comparator<CellView>() {
         @Override
         public int compare(CellView a, CellView b) {
@@ -36,14 +34,14 @@ public class Model {
             return b.getPosition() - a.getPosition();
         }
     };
-    private int cellWidth;
     private int cellMargin;
     private int boardWidth;
+    private int cellWidth;
 
     public Model(int deviceWidth) {
         int idealCellWidth = deviceWidth / CELLS_COUNT_IN_LINE;
         this.cellMargin = idealCellWidth / 10;
-        this.boardWidth = deviceWidth - 2 * cellMargin;
+        this.boardWidth = deviceWidth - 2 * cellMargin; // except right and left margin
         this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
     }
 
@@ -55,303 +53,143 @@ public class Model {
         return cellMargin;
     }
 
-    public int getBoardWidth() {
-        return boardWidth;
-    }
-
-    public int getInnerCellWidth() {
-        return (boardWidth - getCellMargin() * (CELLS_COUNT_IN_LINE + 1)) / CELLS_COUNT_IN_LINE;
-    }
-
     public int getCellsCountInLine() {
         return CELLS_COUNT_IN_LINE;
     }
 
-    public int getInitiatedCells() {
-        return INITIATED_CELLS;
+    public List<CellView> initCells(List<CellView> cells) {
+        return initCells(cells, INITIATED_CELLS);
     }
 
-    public int getInitialScale() {
-        return INITIAL_SCALE;
-    }
-
-    public List<Value> initValues(List<Value> values) {
-        return initValues(values, INITIATED_CELLS);
-    }
-
-    public List<Value> initValues(List<Value> values, int initCells) {
+    public List<CellView> initCells(List<CellView> cells, int initiatedCells) {
         int i = 0;
-        List<Value> initValues = getInitValues(values);
-        while (i < initCells) {
-            Value value = initValue(values);
-            if (!isValueInit(initValues, value)) {
+        List<CellView> notInitCells = getNotInitCells(cells);
+        while (i < initiatedCells) {
+            CellView cell = initCell(notInitCells);
+            if (cell != null) {
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f,
                         Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 scaleAnimation.setDuration(500);
-                value.startAnimation(scaleAnimation);
-                initValues.add(value);
+                cell.startAnimation(scaleAnimation);
                 i++;
             }
         }
-        return values;
+        return cells;
     }
 
-    private List<Value> getInitValues(List<Value> values) {
-        List<Value> initValues = new ArrayList<>();
-        for (Value value : values) {
-            if (value.getNumber() != 0) {
-                initValues.add(value);
+    private List<CellView> getNotInitCells(List<CellView> cells) {
+        List<CellView> notInitCells = new ArrayList<>();
+        for (CellView cell : cells) {
+            if (!cell.hasNumber()) {
+                notInitCells.add(cell);
             }
         }
-        return initValues;
+        return notInitCells;
     }
 
-    private boolean isValueInit(List<Value> values, Value value) {
-        boolean init = false;
-        for (Value v : values) {
-            if (v.equals(value)) {
-                init = true;
-                break;
-            }
-        }
-        return init;
-    }
-
-    private Value initValue(List<Value> values) {
-        Value initValue = null;
-        int random = new Random().nextInt(CELLS_COUNT_IN_LINE * CELLS_COUNT_IN_LINE);
-        for (Value v : values) {
-            int position = v.getPosition();
-            if (random == position) {
-                int pow = new Random().nextInt(INITIAL_SCALE) + 1;
+    private CellView initCell(List<CellView> cells) {
+        Random random = new Random();
+        for (CellView cell : cells) {
+            if (random.nextInt(cells.size()) == 0) {
+                int pow = random.nextInt(INITIAL_SCALE) + 1;
                 int number = (int) Math.pow(2, pow);
-                initValue = v;
-                initValue.setNumber(number);
-                break;
+                cell.setNumber(number);
+                return cell;
             }
         }
-        return initValue;
+        return null;
     }
 
-    public void onSwipeLeft(List<Value> values, ShiftEndListener shiftEndListener) {
-        Log.d(TAG, "values: " + values);
-
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.LEFT, new SideShift() {
-            @Override
-            public int getDestPosition(Value value, int shift) {
-                return value.getPosition() - shift;
-            }
-
-            @Override
-            public TranslateAnimation getTranslateAnimation(int shift) {
-                return new TranslateAnimation(0, -cellWidth * shift, 0, 0);
-            }
-        });
+    public void onSwipeLeft(List<CellView> values, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.LEFT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeTop(List<Value> values, ShiftEndListener shiftEndListener) {
-        Log.d(TAG, "values: " + values);
-
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.TOP, new SideShift() {
-            @Override
-            public int getDestPosition(Value value, int shift) {
-                return value.getPosition() - shift * CELLS_COUNT_IN_LINE;
-            }
-
-            @Override
-            public TranslateAnimation getTranslateAnimation(int shift) {
-                return new TranslateAnimation(0, 0, 0, -cellWidth * shift);
-            }
-        });
+    public void onSwipeTop(List<CellView> values, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.TOP);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeRight(List<Value> values, ShiftEndListener shiftEndListener) {
-        Log.d(TAG, "values: " + values);
-
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.RIGHT, new SideShift() {
-            @Override
-            public int getDestPosition(Value value, int shift) {
-                return value.getPosition() + shift;
-            }
-
-            @Override
-            public TranslateAnimation getTranslateAnimation(int shift) {
-                return new TranslateAnimation(0, cellWidth * shift, 0, 0);
-            }
-        });
+    public void onSwipeRight(List<CellView> values, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.RIGHT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeBottom(List<Value> values, ShiftEndListener shiftEndListener) {
-        Log.d(TAG, "values: " + values);
-
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.BOTTOM, new SideShift() {
-            @Override
-            public int getDestPosition(Value value, int shift) {
-                return value.getPosition() + shift * CELLS_COUNT_IN_LINE;
-            }
-
-            @Override
-            public TranslateAnimation getTranslateAnimation(int shift) {
-                return new TranslateAnimation(0, 0, 0, cellWidth * shift);
-            }
-        });
+    public void onSwipeBottom(List<CellView> values, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.BOTTOM);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    private ShiftAnimation createShiftAnimation(List<Value> sourceValues, ShiftDirection shiftDirection, SideShift
-            sideShift) {
-        ShiftAnimation shiftAnimation = new ShiftAnimation(sourceValues, shiftDirection);
-        Map<Integer, List<Value>> valuesMap = null;
-        switch (shiftDirection) {
+    private ShiftAnimation createShiftAnimation(List<CellView> sourceCells, ShiftDirection direction) {
+        ShiftAnimation shiftAnimation = new ShiftAnimation(sourceCells);
+        Map<Integer, List<CellView>> cellsMap = null;
+        switch (direction) {
             case LEFT:
-                Collections.sort(sourceValues, straightComp);
-                valuesMap = getRowValuesMap(sourceValues);
+                Collections.sort(sourceCells, straightComp);
+                cellsMap = getRowCellsMap(sourceCells);
                 break;
             case TOP:
-                Collections.sort(sourceValues, straightComp);
-                valuesMap = getColumnValuesMap(sourceValues);
+                Collections.sort(sourceCells, straightComp);
+                cellsMap = getColumnCellsMap(sourceCells);
                 break;
             case RIGHT:
-                Collections.sort(sourceValues, backComp);
-                valuesMap = getRowValuesMap(sourceValues);
+                Collections.sort(sourceCells, backComp);
+                cellsMap = getRowCellsMap(sourceCells);
                 break;
             case BOTTOM:
-                Collections.sort(sourceValues, backComp);
-                valuesMap = getColumnValuesMap(sourceValues);
+                Collections.sort(sourceCells, backComp);
+                cellsMap = getColumnCellsMap(sourceCells);
                 break;
             default:
                 break;
         }
-        Set<Map.Entry<Integer, List<Value>>> entries = valuesMap.entrySet();
-        for (Map.Entry<Integer, List<Value>> entry : entries) {
-            List<Value> values = entry.getValue();
-            int shiftCount = 0;
-            for (Value value : values) {
-                if (value.hasNumber()) {
-                    shiftCount++;
-                } else if (shiftCount > 0) {
-                    Value destValue = Utils.getValue(values, sideShift.getDestPosition(value, shiftCount));
-                    TranslateAnimation tr = sideShift.getTranslateAnimation(shiftCount);
-                    tr.setDuration(300);
-                    ValueShift valueShift = new ValueShift(value, destValue, tr);
-                    shiftAnimation.addShift(valueShift);
-                }
-            }
+        Set<Map.Entry<Integer, List<CellView>>> entries = cellsMap.entrySet();
+        for (Map.Entry<Integer, List<CellView>> entry : entries) {
+            List<CellView> cells = entry.getValue();
+            LineShift lineShift = new LineShift(cells, CELLS_COUNT_IN_LINE, getCellWidth());
+            shiftAnimation.addLineShift(lineShift);
         }
+        Log.d(GameActivity.TAG, shiftAnimation.toString());
         return shiftAnimation;
     }
 
-    private Map<Integer, List<Value>> getRowValuesMap(List<Value> values) {
-        Map<Integer, List<Value>> valuesMap = new HashMap<>();
-        for (Value value : values) {
-            int row = getRow(value.getPosition());
-            List<Value> v = valuesMap.get(row);
-            if (v == null) {
-                v = new ArrayList<>();
-                valuesMap.put(row, v);
+    private Map<Integer, List<CellView>> getRowCellsMap(List<CellView> cells) {
+        Map<Integer, List<CellView>> cellsMap = new HashMap<>();
+        for (CellView cell : cells) {
+            int row = getRow(cell.getPosition());
+            List<CellView> c = cellsMap.get(row);
+            if (c == null) {
+                c = new ArrayList<>();
+                cellsMap.put(row, c);
             }
-            v.add(value);
+            c.add(cell);
         }
-        return valuesMap;
+        return cellsMap;
     }
 
     private int getRow(int position) {
         return position / CELLS_COUNT_IN_LINE;
     }
 
-    private Map<Integer, List<Value>> getColumnValuesMap(List<Value> values) {
-        Map<Integer, List<Value>> valuesMap = new HashMap<>();
-        for (Value value : values) {
-            int row = getColumn(value.getPosition());
-            List<Value> v = valuesMap.get(row);
-            if (v == null) {
-                v = new ArrayList<>();
-                valuesMap.put(row, v);
+    private Map<Integer, List<CellView>> getColumnCellsMap(List<CellView> cells) {
+        Map<Integer, List<CellView>> cellsMap = new HashMap<>();
+        for (CellView cell : cells) {
+            int row = getColumn(cell.getPosition());
+            List<CellView> c = cellsMap.get(row);
+            if (c == null) {
+                c = new ArrayList<>();
+                cellsMap.put(row, c);
             }
-            v.add(value);
+            c.add(cell);
         }
-        return valuesMap;
+        return cellsMap;
     }
 
     private int getColumn(int position) {
         return position % CELLS_COUNT_IN_LINE;
-    }
-
-    private void lineShift(ShiftAnimation shiftAnimation, List<Value> values, ShiftDirection shiftDirection, SideShift
-            sideShift) {
-
-        List<Value> shifted = new ArrayList<>();
-        List<Value> dests = new ArrayList<>();
-        Map<Value, List<Value>> destMap = new HashMap<>();
-
-        for (Value value : values) {
-            int position = value.getPosition();
-            int maxShiftCount = 0;
-
-            switch (shiftDirection) {
-                case LEFT:
-                    maxShiftCount = position % CELLS_COUNT_IN_LINE;
-                    break;
-                case TOP:
-                    maxShiftCount = position / CELLS_COUNT_IN_LINE;
-                    break;
-                case RIGHT:
-                    maxShiftCount = CELLS_COUNT_IN_LINE - 1 - position % CELLS_COUNT_IN_LINE;
-                    break;
-                case BOTTOM:
-                    maxShiftCount = CELLS_COUNT_IN_LINE - 1 - position / CELLS_COUNT_IN_LINE;
-            }
-
-            if (value.getNumber() != 0) {
-                int shiftCount = maxShiftCount;
-                ValueShift valueShift = null;
-                while (true) {
-                    Value destValue = Utils.getValue(values, sideShift.getDestPosition(value, shiftCount));
-                    if (destValue == null || destValue.getPosition() == value.getPosition()) {
-                        break;
-                    } else {
-                        List<Value> sources = destMap.get(destValue);
-                        if (sources == null) {
-                            sources = new ArrayList<>();
-                            sources.add(value);
-                            destMap.put(destValue, sources);
-
-                            TranslateAnimation tr = sideShift.getTranslateAnimation(shiftCount);
-                            tr.setDuration(300);
-                            valueShift = new ValueShift(value, destValue, tr);
-                            break;
-                        } else {
-                            if (sources.size() != 1) {
-                                shiftCount--;
-                            } else {
-                                if (sources.get(0).getNumber() == value.getNumber()) {
-                                    sources.add(value);
-
-                                    TranslateAnimation tr = sideShift.getTranslateAnimation(shiftCount);
-                                    tr.setDuration(300);
-                                    valueShift = new ValueShift(value, destValue, tr);
-                                    break;
-                                } else {
-                                    shiftCount--;
-                                }
-                            }
-                        }
-                    }
-                }
-                shiftAnimation.addShift(valueShift);
-            }
-        }
-    }
-
-    private Value getDest(List<Value> values) {
-
-        return null;
     }
 }

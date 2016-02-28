@@ -9,7 +9,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private List<Value> values;
+    private List<CellView> cells;
     private Model model;
     private boolean isSwiping;
 
@@ -30,19 +30,32 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        detector = new GestureDetectorCompat(this, new MyGestureListener());
+        detector = new GestureDetectorCompat(this, new GestureListener());
         model = new Model(Utils.getDeviceWidth(this));
+
+        GridView backgroundBoard = (GridView) findViewById(R.id.backgroundBoard);
+        GridView foregroundBoard = (GridView) findViewById(R.id.foregroundBoard);
+
+        initBoard(backgroundBoard);
+        initBoard(foregroundBoard);
+
+        CellViewAdapter cellViewAdapter = (CellViewAdapter) foregroundBoard.getAdapter();
+        cells = cellViewAdapter.getCellViews();
+        cells = model.initCells(cells);
+
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+    }
+
+    private void initBoard(GridView board) {
         int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInLine();
+        LayoutParams layoutParams = (LayoutParams) board.getLayoutParams();
+        layoutParams.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
 
-        GridView board = (GridView) findViewById(R.id.cellBoard);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) board.getLayoutParams();
-        params.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
-        CellAdapter cellAdapter = new CellAdapter(this, model);
-        board.setAdapter(cellAdapter);
+        CellViewAdapter cellViewAdapter = new CellViewAdapter(this, model);
+        board.setAdapter(cellViewAdapter);
         board.setNumColumns(cellsCountInRow);
         board.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -51,25 +64,6 @@ public class GameActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        GridView board2 = (GridView) findViewById(R.id.valueBoard);
-        RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) board2.getLayoutParams();
-        params2.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
-        ValueAdapter valueAdapter = new ValueAdapter(this, model);
-        board2.setAdapter(valueAdapter);
-        board2.setNumColumns(cellsCountInRow);
-        board2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                detector.onTouchEvent(event);
-                return false;
-            }
-        });
-
-        values = valueAdapter.getValues();
-        values = model.initValues(values);
-
-        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
 
     @Override
@@ -79,70 +73,74 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void onSwipeLeft() {
-        Log.d(TAG, "left swipe");
+        Log.d(TAG, "left swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<Value> valuesAfterShift) {
+            public void onShifted(List<CellView> cellsAfterShift) {
                 isSwiping = false;
-                values = model.initValues(valuesAfterShift, 1);
-                Log.d(TAG, "onShifted");
+                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
+                cells = model.initCells(cellsAfterShift, 1);
+                Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeLeft(values, shiftEndListener);
+            model.onSwipeLeft(cells, shiftEndListener);
         }
     }
 
     private void onSwipeTop() {
-        Log.d(TAG, "top swipe");
+        Log.d(TAG, "top swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<Value> valuesAfterShift) {
+            public void onShifted(List<CellView> cellsAfterShift) {
                 isSwiping = false;
-                values = model.initValues(valuesAfterShift, 1);
-                Log.d(TAG, "onShifted");
+                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
+                cells = model.initCells(cellsAfterShift, 1);
+                Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeTop(values, shiftEndListener);
+            model.onSwipeTop(cells, shiftEndListener);
         }
     }
 
     private void onSwipeRight() {
-        Log.d(TAG, "right swipe");
+        Log.d(TAG, "right swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<Value> valuesAfterShift) {
+            public void onShifted(List<CellView> cellsAfterShift) {
                 isSwiping = false;
-                values = model.initValues(valuesAfterShift, 1);
-                Log.d(TAG, "onShifted");
+                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
+                cells = model.initCells(cellsAfterShift, 1);
+                Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeRight(values, shiftEndListener);
+            model.onSwipeRight(cells, shiftEndListener);
         }
     }
 
     private void onSwipeBottom() {
-        Log.d(TAG, "bottom swipe");
+        Log.d(TAG, "bottom swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<Value> valuesAfterShift) {
+            public void onShifted(List<CellView> cellsAfterShift) {
                 isSwiping = false;
-                values = model.initValues(valuesAfterShift, 1);
-                Log.d(TAG, "onShifted");
+                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
+                cells = model.initCells(cellsAfterShift, 1);
+                Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
         if (!isSwiping) {
             isSwiping = true;
-            model.onSwipeBottom(values, shiftEndListener);
+            model.onSwipeBottom(cells, shiftEndListener);
         }
     }
 
-    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
@@ -153,9 +151,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2,
-                               float velocityX, float velocityY) {
-
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
             float diffY = event2.getY() - event1.getY();
             float diffX = event2.getX() - event1.getX();
             if (Math.abs(diffX) > Math.abs(diffY)) {

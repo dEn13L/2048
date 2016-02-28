@@ -8,13 +8,26 @@ import java.util.List;
  */
 public class LineShift {
 
-    private List<Cell> cellList;
+    private List<CellView> cellList;
     private List<Shift> shiftList;
+    private int cellsCountInLine;
+    private int cellWidth;
 
-    public LineShift(List<Cell> cellList) {
+    public LineShift(List<CellView> cellList, int cellsCountInLine, int cellWidth) {
         this.cellList = cellList;
         this.shiftList = new ArrayList<>();
+        this.cellsCountInLine = cellsCountInLine;
+        this.cellWidth = cellWidth;
         createShifts();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Shift shift : shiftList) {
+            stringBuilder.append(shift.toString()).append("\n");
+        }
+        return stringBuilder.toString();
     }
 
     public List<Shift> getShiftList() {
@@ -23,11 +36,11 @@ public class LineShift {
 
     private void createShifts() {
         for (int i = 0; i < cellList.size(); i++) {
-            Cell sourceCell = cellList.get(i);
+            CellView sourceCell = cellList.get(i);
             if (sourceCell.hasNumber()) {
-                Cell destCell = getDestCell(sourceCell, i);
+                CellView destCell = getDestCell(sourceCell, i);
                 if (destCell != null) {
-                    Shift shift = new Shift(sourceCell, destCell);
+                    Shift shift = new Shift(sourceCell, destCell, cellsCountInLine, cellWidth);
                     mergeShifts(shift);
                     shiftList.add(shift);
                 }
@@ -35,10 +48,10 @@ public class LineShift {
         }
     }
 
-    private Cell getDestCell(Cell sourceCell, int i) {
-        Cell destCell = null;
-        for (int j = i - 1; j >= 0; j--) {
-            Cell destCellCandidate = cellList.get(j);
+    private CellView getDestCell(CellView sourceCell, int i) {
+        CellView destCell = null;
+        for (int j = i; j >= 0; j--) {
+            CellView destCellCandidate = cellList.get(j);
             // last suitable candidate will be destination cell
             if (canShift(sourceCell, destCellCandidate)) {
                 destCell = destCellCandidate;
@@ -49,7 +62,7 @@ public class LineShift {
         return destCell;
     }
 
-    private boolean canShift(Cell sourceCell, Cell destCell) {
+    private boolean canShift(CellView sourceCell, CellView destCell) {
         boolean isShiftAllowed = true;
         int destCellShiftsCount = 0;
         for (Shift shift : shiftList) {
@@ -67,8 +80,9 @@ public class LineShift {
     private void mergeShifts(Shift mergeShift) {
         for (Shift shift : shiftList) {
             if (shift.getDestCell().equals(mergeShift.getDestCell())) {
-                shift.setDestNumber(0);
-                mergeShift.setDestNumber(2 * mergeShift.getDestNumber());
+                int doubleDestNumber = 2 * mergeShift.getDestNumber();
+                shift.setDestNumber(doubleDestNumber);
+                mergeShift.setDestNumber(doubleDestNumber);
                 break;
             }
         }

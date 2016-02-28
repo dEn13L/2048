@@ -1,11 +1,15 @@
 package com.den13l.new2048;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * Created by erdenierdyneev on 13.02.16.
@@ -14,87 +18,69 @@ public class CellView extends RelativeLayout {
 
     public static final String CELL_COLOR = "#BBBBBB";
 
-    protected RelativeLayout paddingCell;
-    private Model model;
-    private int cellsCountInRow;
-    protected int position;
+    private RelativeLayout substrate;
+    private TextView textView;
+    private Cell cell;
 
-    public CellView(CellView cellView) {
-        this(cellView.getContext(), cellView.getPosition(), cellView.getModel());
-    }
-
-    public CellView(Context context, int position, Model model) {
+    public CellView(Context context, int position) {
         super(context);
 
-        int cellPx = model.getCellWidth();
-        setLayoutParams(new AbsListView.LayoutParams(cellPx, cellPx));
+        cell = new Cell(position);
+        substrate = new RelativeLayout(context);
+        substrate.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
-        this.model = model;
-        this.cellsCountInRow = model.getCellsCountInLine();
-        this.position = position;
-        this.paddingCell = new RelativeLayout(context);
-        this.paddingCell.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        addView(paddingCell);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        params.addRule(CENTER_HORIZONTAL);
+        params.addRule(CENTER_VERTICAL);
 
-        int cellMarginPx = model.getCellMargin();
-        if (isFirstColumn(position)) {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx, cellMarginPx, cellMarginPx / 2, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2);
-            }
-        } else if (isLastColumn(position)) {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx, cellMarginPx, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx, cellMarginPx / 2);
-            }
-        } else {
-            if (isFirstRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx, cellMarginPx / 2, cellMarginPx / 2);
-            } else if (isLastRaw(position)) {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx);
-            } else {
-                setPadding(cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2, cellMarginPx / 2);
-            }
-        }
+        textView = new TextView(context);
+        textView.setLayoutParams(params);
+
+        addView(substrate);
+        substrate.addView(textView);
     }
 
     @Override
     public String toString() {
-        return "P " + position;
+        return "P" + cell.getPosition() + ":N" + textView.getText();
     }
 
     @Override
     public void setBackgroundColor(int color) {
-        paddingCell.setBackgroundColor(color);
+        substrate.setBackgroundColor(color);
     }
 
-    public Model getModel() {
-        return model;
+    public void setNumber(int number) {
+        cell.setNumber(number);
+        textView.setText(String.valueOf(number));
+        switch (number) {
+            case 0:
+                setBackgroundColor(Color.TRANSPARENT);
+                textView.setText("");
+                break;
+            case 2:
+                setBackgroundColor(Color.parseColor("#EFE6E6"));
+                break;
+            case 4:
+                setBackgroundColor(Color.parseColor("#CAAFAF"));
+                break;
+            case 8:
+                setBackgroundColor(Color.parseColor("#C0AFAF"));
+                break;
+            default:
+                setBackgroundColor(Color.parseColor("#DDDDDD"));
+        }
+    }
+
+    public boolean hasNumber() {
+        return cell.hasNumber();
+    }
+
+    public int getNumber() {
+        return cell.getNumber();
     }
 
     public int getPosition() {
-        return position;
-    }
-
-    private boolean isFirstColumn(int position) {
-        return position % cellsCountInRow == 0;
-    }
-
-    private boolean isLastColumn(int position) {
-        return (position + 1) % cellsCountInRow == 0;
-    }
-
-    private boolean isFirstRaw(int position) {
-        return position / cellsCountInRow == 0;
-    }
-
-    private boolean isLastRaw(int position) {
-        return position / cellsCountInRow == cellsCountInRow - 1;
+        return cell.getPosition();
     }
 }
