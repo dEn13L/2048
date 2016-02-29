@@ -17,27 +17,31 @@ public class Shift {
         this.destCell = destCell;
         this.destNumber = getSourceNumber();
         int shiftCount = destCell.getPosition() - sourceCell.getPosition();
-        if (shiftCount != 0) {
-            if (Math.abs(shiftCount) < cellsCountInLine) {
-                // right or left shift
-                translateAnimation = new TranslateAnimation(0, cellWidth * shiftCount, 0, 0);
-                translateAnimation.setDuration(500);
-            } else {
-                // top or bottom shift
-                translateAnimation = new TranslateAnimation(0, 0, 0, cellWidth * (shiftCount / cellsCountInLine));
-                translateAnimation.setDuration(500);
-            }
+        if (Math.abs(shiftCount) < cellsCountInLine) {
+            // right or left shift
+            translateAnimation = new TranslateAnimation(0, cellWidth * shiftCount, 0, 0);
+            translateAnimation.setDuration(500);
+        } else {
+            // top or bottom shift
+            translateAnimation = new TranslateAnimation(0, 0, 0, cellWidth * (shiftCount / cellsCountInLine));
+            translateAnimation.setDuration(500);
         }
     }
 
-    public TranslateAnimation getTranslateAnimation() {
-        return translateAnimation;
+    public void start(ShiftListener shiftListener) {
+        shiftListener.setShift(this);
+        translateAnimation.setAnimationListener(shiftListener);
+        sourceCell.startAnimation(translateAnimation);
     }
 
     @Override
     public String toString() {
         return "Shift. Source: " + sourceCell.toString() + ", Dest: " + destCell.toString() + ", destNumber:" +
                 destNumber;
+    }
+
+    public TranslateAnimation getTranslateAnimation() {
+        return translateAnimation;
     }
 
     public CellView getSourceCell() {

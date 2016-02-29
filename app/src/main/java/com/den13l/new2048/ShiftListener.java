@@ -10,12 +10,15 @@ public class ShiftListener implements Animation.AnimationListener {
 
     private Shift shift;
     private ShiftAnimation shiftAnimation;
-    private boolean hasShiftToCell;
+    private boolean cleanSourceCell;
 
-    public ShiftListener(Shift shift, ShiftAnimation shiftAnimation, boolean hasShiftToCell) {
-        this.shift = shift;
+    public ShiftListener(ShiftAnimation shiftAnimation, boolean cleanSourceCell) {
         this.shiftAnimation = shiftAnimation;
-        this.hasShiftToCell = hasShiftToCell;
+        this.cleanSourceCell = cleanSourceCell;
+    }
+
+    public void setShift(Shift shift) {
+        this.shift = shift;
     }
 
     @Override
@@ -29,8 +32,10 @@ public class ShiftListener implements Animation.AnimationListener {
         int destNumber = shift.getDestNumber();
         CellView sourceCell = shift.getSourceCell();
         CellView destCell = shift.getDestCell();
-        destCell.setNumber(destNumber);
-        if (!hasShiftToCell) {
+        if (!destCell.equals(sourceCell)) {
+            destCell.setNumber(destNumber);
+        }
+        if (cleanSourceCell) {
             sourceCell.setNumber(0);
         }
         shiftAnimation.onAnimationEnd(animation);

@@ -1,8 +1,6 @@
 package com.den13l.new2048;
 
-import android.util.Log;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
     private List<LineShift> lineShifts;
     private List<CellView> cells;
     private ShiftEndListener shiftEndListener;
-    private int shiftsCount;
+    private int activeShiftsCount;
     private int animatedShifts;
 
     public ShiftAnimation(List<CellView> cells) {
@@ -41,23 +39,28 @@ public class ShiftAnimation implements Animation.AnimationListener {
     }
 
     public void start() {
+        activeShiftsCount = getActiveShiftsCount();
         for (LineShift lineShift : lineShifts) {
             List<Shift> shifts = lineShift.getShiftList();
             for (Shift shift : shifts) {
-                TranslateAnimation translateAnimation = shift.getTranslateAnimation();
-                if (translateAnimation != null) {
-                    shiftsCount++;
-                    CellView sourceCell = shift.getSourceCell();
-                    boolean hasShiftToCell = hasShiftToCell(sourceCell);
-                    ShiftListener shiftListener = new ShiftListener(shift, this, hasShiftToCell);
-                    translateAnimation.setAnimationListener(shiftListener);
-                    sourceCell.startAnimation(translateAnimation);
-                }
+                CellView sourceCell = shift.getSourceCell();
+                boolean hasShiftToCell = hasShiftToCell(sourceCell);
+                ShiftListener shiftListener = new ShiftListener(this, !hasShiftToCell);
+                shift.start(shiftListener);
             }
         }
-        if (shiftsCount == 0 && shiftEndListener != null) {
+        if (activeShiftsCount == 0 && shiftEndListener != null) {
             shiftEndListener.onShifted(cells);
         }
+    }
+
+    private int getActiveShiftsCount() {
+        int shiftsCount = 0;
+        for (LineShift lineShift : lineShifts) {
+            List<Shift> shifts = lineShift.getShiftList();
+            shiftsCount += shifts.size();
+        }
+        return shiftsCount;
     }
 
     public boolean hasShiftToCell(CellView cell) {
@@ -81,7 +84,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
     @Override
     public void onAnimationEnd(Animation animation) {
         animatedShifts++;
-        if (animatedShifts == shiftsCount && shiftEndListener != null) {
+        if (animatedShifts == activeShiftsCount && shiftEndListener != null) {
             shiftEndListener.onShifted(cells);
         }
     }
