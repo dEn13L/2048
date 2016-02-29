@@ -22,6 +22,11 @@ public class Model {
     private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
 
+    private final String TEXT_COLOR = "#776E65";
+    private final String BRIGHT_TEXT_COLOR = "#f9f6f2";
+    private final String TILE_COLOR = "#eee4da";
+    private final String TILE_GOLD_COLOR = "#edc22e";
+
     Comparator<CellView> straightComp = new Comparator<CellView>() {
         @Override
         public int compare(CellView a, CellView b) {
@@ -68,7 +73,7 @@ public class Model {
             if (cell != null) {
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f,
                         Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                scaleAnimation.setDuration(500);
+                scaleAnimation.setDuration(300);
                 cell.startAnimation(scaleAnimation);
                 i++;
             }

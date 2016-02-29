@@ -29,7 +29,6 @@ public class CellViewAdapter extends BaseAdapter {
     private void createCellViews(Context context, Model model) {
         for (int i = 0; i < getCount(); i++) {
             CellView cellView = new CellView(context, i);
-            cellView.setBackgroundColor(Color.parseColor(CellView.CELL_COLOR));
             cellView.setLayoutParams(new AbsListView.LayoutParams(model.getCellWidth(), model.getCellWidth()));
             int margin = model.getCellMargin();
             if (isFirstColumn(i)) {

@@ -2,6 +2,9 @@ package com.den13l.new2048;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,18 +17,20 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  */
 public class CellView extends RelativeLayout {
 
-    public static final String CELL_COLOR = "#BBBBBB";
+    public static final String CELL_COLOR = "#bbada0";
 
-    private RelativeLayout substrate;
+    private GradientDrawable background;
     private TextView textView;
     private int position;
 
     public CellView(Context context, int position) {
         super(context);
 
+        this.background = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.cornered_rectangle);
         this.position = position;
-        this.substrate = new RelativeLayout(context);
-        this.substrate.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+
+        RelativeLayout substrate = new RelativeLayout(context);
+        substrate.setLayoutParams(new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         params.addRule(CENTER_HORIZONTAL);
@@ -33,9 +38,13 @@ public class CellView extends RelativeLayout {
 
         this.textView = new TextView(context);
         this.textView.setLayoutParams(params);
+        this.textView.setTextSize(35);
+        this.textView.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD);
 
         addView(substrate);
         substrate.addView(textView);
+        substrate.setBackground(background);
+        setBackgroundColor(CELL_COLOR);
     }
 
     @Override
@@ -45,7 +54,19 @@ public class CellView extends RelativeLayout {
 
     @Override
     public void setBackgroundColor(int color) {
-        substrate.setBackgroundColor(color);
+        background.setColor(color);
+    }
+
+    public void setBackgroundColor(String color) {
+        setBackgroundColor(Color.parseColor(color));
+    }
+
+    public void setTextColor(int color) {
+        textView.setTextColor(color);
+    }
+
+    public void setTextColor(String color) {
+        setTextColor(Color.parseColor(color));
     }
 
     public boolean hasNumber() {
@@ -70,16 +91,51 @@ public class CellView extends RelativeLayout {
                 textView.setText("");
                 break;
             case 2:
-                setBackgroundColor(Color.parseColor("#EFE6E6"));
+                setBackgroundColor("#eee4da");
+                setTextColor("#776E65");
                 break;
             case 4:
-                setBackgroundColor(Color.parseColor("#CAAFAF"));
+                setBackgroundColor("#eee1c9");
+                setTextColor("#776E65");
                 break;
             case 8:
-                setBackgroundColor(Color.parseColor("#C0AFAF"));
+                setBackgroundColor("#f3b27a");
+                setTextColor("#f9f6f2");
+                break;
+            case 16:
+                setBackgroundColor("#f69664");
+                setTextColor("#f9f6f2");
+                break;
+            case 32:
+                setBackgroundColor("#ff3333");
+                setTextColor("#f9f6f2");
+                break;
+            case 64:
+                setBackgroundColor("#f75f3b");
+                setTextColor("#f9f6f2");
+                break;
+            case 128:
+                setBackgroundColor("#edd073");
+                setTextColor("#f9f6f2");
+                break;
+            case 256:
+                setBackgroundColor("#edcc62");
+                setTextColor("#f9f6f2");
+                break;
+            case 512:
+                setBackgroundColor("#edc950");
+                setTextColor("#f9f6f2");
+                break;
+            case 1024:
+                setBackgroundColor("#edc53f");
+                setTextColor("#f9f6f2");
+                break;
+            case 2048:
+                setBackgroundColor("#edc22e");
+                setTextColor("#f9f6f2");
                 break;
             default:
-                setBackgroundColor(Color.parseColor("#DDDDDD"));
+                setBackgroundColor("#DDDDDD");
         }
     }
 

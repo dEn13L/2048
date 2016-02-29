@@ -21,11 +21,11 @@ public class Shift {
             if (Math.abs(shiftCount) < cellsCountInLine) {
                 // right or left shift
                 translateAnimation = new TranslateAnimation(0, cellWidth * shiftCount, 0, 0);
-                translateAnimation.setDuration(500);
+                translateAnimation.setDuration(200);
             } else {
                 // top or bottom shift
                 translateAnimation = new TranslateAnimation(0, 0, 0, cellWidth * (shiftCount / cellsCountInLine));
-                translateAnimation.setDuration(500);
+                translateAnimation.setDuration(200);
             }
         }
     }
