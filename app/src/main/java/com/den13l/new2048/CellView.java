@@ -40,7 +40,7 @@ public class CellView extends RelativeLayout {
 
     @Override
     public String toString() {
-        return "P" + position + ":N" + textView.getText();
+        return "p" + position + ":n" + textView.getText();
     }
 
     @Override

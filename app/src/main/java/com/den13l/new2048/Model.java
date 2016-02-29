@@ -35,13 +35,12 @@ public class Model {
         }
     };
     private int cellMargin;
-    private int boardWidth;
     private int cellWidth;
 
     public Model(int deviceWidth) {
         int idealCellWidth = deviceWidth / CELLS_COUNT_IN_LINE;
         this.cellMargin = idealCellWidth / 10;
-        this.boardWidth = deviceWidth - 2 * cellMargin; // except right and left margin
+        int boardWidth = deviceWidth - 2 * cellMargin;
         this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
     }
 
@@ -63,8 +62,8 @@ public class Model {
 
     public List<CellView> initCells(List<CellView> cells, int initiatedCells) {
         int i = 0;
-        List<CellView> notInitCells = getNotInitCells(cells);
         while (i < initiatedCells) {
+            List<CellView> notInitCells = getNotInitCells(cells);
             CellView cell = initCell(notInitCells);
             if (cell != null) {
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f,
@@ -100,26 +99,26 @@ public class Model {
         return null;
     }
 
-    public void onSwipeLeft(List<CellView> values, ShiftEndListener shiftEndListener) {
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.LEFT);
+    public void onSwipeLeft(List<CellView> cells, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.LEFT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeTop(List<CellView> values, ShiftEndListener shiftEndListener) {
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.TOP);
+    public void onSwipeTop(List<CellView> cells, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.TOP);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeRight(List<CellView> values, ShiftEndListener shiftEndListener) {
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.RIGHT);
+    public void onSwipeRight(List<CellView> cells, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.RIGHT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeBottom(List<CellView> values, ShiftEndListener shiftEndListener) {
-        ShiftAnimation shiftAnimation = createShiftAnimation(values, ShiftDirection.BOTTOM);
+    public void onSwipeBottom(List<CellView> cells, ShiftEndListener shiftEndListener) {
+        ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.BOTTOM);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
@@ -178,11 +177,11 @@ public class Model {
     private Map<Integer, List<CellView>> getColumnCellsMap(List<CellView> cells) {
         Map<Integer, List<CellView>> cellsMap = new HashMap<>();
         for (CellView cell : cells) {
-            int row = getColumn(cell.getPosition());
-            List<CellView> c = cellsMap.get(row);
+            int column = getColumn(cell.getPosition());
+            List<CellView> c = cellsMap.get(column);
             if (c == null) {
                 c = new ArrayList<>();
-                cellsMap.put(row, c);
+                cellsMap.put(column, c);
             }
             c.add(cell);
         }
