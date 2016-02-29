@@ -1,6 +1,7 @@
 package com.den13l.new2048;
 
 import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,28 +40,23 @@ public class ShiftAnimation implements Animation.AnimationListener {
     }
 
     public void start() {
-        activeShiftsCount = getActiveShiftsCount();
         for (LineShift lineShift : lineShifts) {
             List<Shift> shifts = lineShift.getShiftList();
             for (Shift shift : shifts) {
                 CellView sourceCell = shift.getSourceCell();
-                boolean hasShiftToCell = hasShiftToCell(sourceCell);
-                ShiftListener shiftListener = new ShiftListener(this, !hasShiftToCell);
-                shift.start(shiftListener);
+                TranslateAnimation translateAnimation = shift.getTranslateAnimation();
+                if (translateAnimation != null) {
+                    activeShiftsCount++;
+                    boolean hasShiftToCell = hasShiftToCell(sourceCell);
+                    ShiftListener shiftListener = new ShiftListener(shift, this, !hasShiftToCell);
+                    translateAnimation.setAnimationListener(shiftListener);
+                    sourceCell.startAnimation(translateAnimation);
+                }
             }
         }
         if (activeShiftsCount == 0 && shiftEndListener != null) {
-            shiftEndListener.onShifted(cells);
+            shiftEndListener.onShifted(false);
         }
-    }
-
-    private int getActiveShiftsCount() {
-        int shiftsCount = 0;
-        for (LineShift lineShift : lineShifts) {
-            List<Shift> shifts = lineShift.getShiftList();
-            shiftsCount += shifts.size();
-        }
-        return shiftsCount;
     }
 
     public boolean hasShiftToCell(CellView cell) {
@@ -85,7 +81,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
     public void onAnimationEnd(Animation animation) {
         animatedShifts++;
         if (animatedShifts == activeShiftsCount && shiftEndListener != null) {
-            shiftEndListener.onShifted(cells);
+            shiftEndListener.onShifted(true);
         }
     }
 

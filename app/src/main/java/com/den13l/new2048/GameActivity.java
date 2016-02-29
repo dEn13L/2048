@@ -43,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
 
         CellViewAdapter cellViewAdapter = (CellViewAdapter) foregroundBoard.getAdapter();
         cells = cellViewAdapter.getCellViews();
-        cells = model.initCells(cells);
+        model.initCells(cells);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
@@ -76,10 +76,11 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "left swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<CellView> cellsAfterShift) {
+            public void onShifted(boolean isShifted) {
                 isSwiping = false;
-                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
-                cells = model.initCells(cellsAfterShift, 1);
+                if (isShifted) {
+                    model.initCells(cells, 1);
+                }
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -93,10 +94,11 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "top swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<CellView> cellsAfterShift) {
+            public void onShifted(boolean isShifted) {
                 isSwiping = false;
-                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
-                cells = model.initCells(cellsAfterShift, 1);
+                if (isShifted) {
+                    model.initCells(cells, 1);
+                }
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -110,10 +112,11 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "right swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<CellView> cellsAfterShift) {
+            public void onShifted(boolean isShifted) {
                 isSwiping = false;
-                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
-                cells = model.initCells(cellsAfterShift, 1);
+                if (isShifted) {
+                    model.initCells(cells, 1);
+                }
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -127,10 +130,11 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "bottom swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(List<CellView> cellsAfterShift) {
+            public void onShifted(boolean isShifted) {
                 isSwiping = false;
-                Log.d(TAG, "cellsAfterShift. " + cellsAfterShift.toString());
-                cells = model.initCells(cellsAfterShift, 1);
+                if (isShifted) {
+                    model.initCells(cells, 1);
+                }
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };

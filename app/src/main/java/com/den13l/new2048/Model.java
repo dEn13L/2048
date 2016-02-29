@@ -56,11 +56,11 @@ public class Model {
         return CELLS_COUNT_IN_LINE;
     }
 
-    public List<CellView> initCells(List<CellView> cells) {
-        return initCells(cells, INITIATED_CELLS);
+    public void initCells(List<CellView> cells) {
+        initCells(cells, INITIATED_CELLS);
     }
 
-    public List<CellView> initCells(List<CellView> cells, int initiatedCells) {
+    public void initCells(List<CellView> cells, int initiatedCells) {
         int i = 0;
         while (i < initiatedCells) {
             List<CellView> notInitCells = getNotInitCells(cells);
@@ -73,7 +73,6 @@ public class Model {
                 i++;
             }
         }
-        return cells;
     }
 
     private List<CellView> getNotInitCells(List<CellView> cells) {
