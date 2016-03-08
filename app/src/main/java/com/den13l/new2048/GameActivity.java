@@ -30,8 +30,6 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-
         detector = new GestureDetectorCompat(this, new GestureListener());
         model = new Model(Utils.getDeviceWidth(this));
 
