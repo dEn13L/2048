@@ -3,7 +3,6 @@ package com.den13l.new2048;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -49,8 +48,6 @@ public class GameActivity extends AppCompatActivity {
     private void initBoard(GridView board) {
         int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInLine();
-        LayoutParams layoutParams = (LayoutParams) board.getLayoutParams();
-        layoutParams.setMargins(cellMargin, cellMargin, cellMargin, cellMargin);
 
         CellViewAdapter cellViewAdapter = new CellViewAdapter(this, model);
         board.setAdapter(cellViewAdapter);

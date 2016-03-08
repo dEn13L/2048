@@ -1,7 +1,7 @@
 package com.den13l.new2048;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -57,6 +57,9 @@ public class CellViewAdapter extends BaseAdapter {
                 }
             }
             cellViews.add(cellView);
+
+            Log.d(GameActivity.TAG, cellView.toString() + ". PADDING: " + cellView.getPaddingLeft() + ", " + cellView
+                    .getPaddingTop() + ", " + cellView.getPaddingRight() + ", " + cellView.getPaddingBottom());
         }
     }
 
