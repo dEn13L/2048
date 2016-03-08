@@ -27,8 +27,8 @@ public class ShiftListener implements Animation.AnimationListener {
     public void onAnimationEnd(Animation animation) {
         Log.d(GameActivity.TAG, "onAnimationEnd. " + shift.toString());
         int destNumber = shift.getDestNumber();
-        CellView sourceCell = shift.getSourceCell();
-        CellView destCell = shift.getDestCell();
+        Cell sourceCell = shift.getSourceCell();
+        Cell destCell = shift.getDestCell();
         destCell.setNumber(destNumber);
         if (cleanSourceCell) {
             sourceCell.setNumber(0);

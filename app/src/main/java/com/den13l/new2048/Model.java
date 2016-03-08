@@ -22,30 +22,25 @@ public class Model {
     private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
 
-    private final String TEXT_COLOR = "#776E65";
-    private final String BRIGHT_TEXT_COLOR = "#f9f6f2";
-    private final String TILE_COLOR = "#eee4da";
-    private final String TILE_GOLD_COLOR = "#edc22e";
-
-    Comparator<CellView> straightComp = new Comparator<CellView>() {
+    private int cellPadding;
+    private int cellWidth;
+    private Comparator<Cell> straightComp = new Comparator<Cell>() {
         @Override
-        public int compare(CellView a, CellView b) {
+        public int compare(Cell a, Cell b) {
             return a.getPosition() - b.getPosition();
         }
     };
-    Comparator<CellView> backComp = new Comparator<CellView>() {
+    private Comparator<Cell> backComp = new Comparator<Cell>() {
         @Override
-        public int compare(CellView a, CellView b) {
+        public int compare(Cell a, Cell b) {
             return b.getPosition() - a.getPosition();
         }
     };
-    private int cellMargin;
-    private int cellWidth;
 
     public Model(int deviceWidth) {
         int idealCellWidth = deviceWidth / CELLS_COUNT_IN_LINE;
-        this.cellMargin = idealCellWidth / 10;
-        int boardWidth = deviceWidth - 2 * cellMargin;
+        this.cellPadding = idealCellWidth / 10;
+        int boardWidth = deviceWidth - 2 * cellPadding;
         this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
     }
 
@@ -53,23 +48,23 @@ public class Model {
         return cellWidth;
     }
 
-    public int getCellMargin() {
-        return cellMargin;
+    public int getCellPadding() {
+        return cellPadding;
     }
 
     public int getCellsCountInLine() {
         return CELLS_COUNT_IN_LINE;
     }
 
-    public void initCells(List<CellView> cells) {
+    public void initCells(List<Cell> cells) {
         initCells(cells, INITIATED_CELLS);
     }
 
-    public void initCells(List<CellView> cells, int initiatedCells) {
+    public void initCells(List<Cell> cells, int initiatedCells) {
         int i = 0;
         while (i < initiatedCells) {
-            List<CellView> notInitCells = getNotInitCells(cells);
-            CellView cell = initCell(notInitCells);
+            List<Cell> notInitCells = getNotInitCells(cells);
+            Cell cell = initCell(notInitCells);
             if (cell != null) {
                 ScaleAnimation scaleAnimation = new ScaleAnimation(0f, 0.5f, 0f, 0.5f,
                         Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -80,9 +75,9 @@ public class Model {
         }
     }
 
-    private List<CellView> getNotInitCells(List<CellView> cells) {
-        List<CellView> notInitCells = new ArrayList<>();
-        for (CellView cell : cells) {
+    private List<Cell> getNotInitCells(List<Cell> cells) {
+        List<Cell> notInitCells = new ArrayList<>();
+        for (Cell cell : cells) {
             if (!cell.hasNumber()) {
                 notInitCells.add(cell);
             }
@@ -90,9 +85,9 @@ public class Model {
         return notInitCells;
     }
 
-    private CellView initCell(List<CellView> cells) {
+    private Cell initCell(List<Cell> cells) {
         Random random = new Random();
-        for (CellView cell : cells) {
+        for (Cell cell : cells) {
             if (random.nextInt(cells.size()) == 0) {
                 int pow = random.nextInt(INITIAL_SCALE) + 1;
                 int number = (int) Math.pow(2, pow);
@@ -103,33 +98,33 @@ public class Model {
         return null;
     }
 
-    public void onSwipeLeft(List<CellView> cells, ShiftEndListener shiftEndListener) {
+    public void onSwipeLeft(List<Cell> cells, ShiftEndListener shiftEndListener) {
         ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.LEFT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeTop(List<CellView> cells, ShiftEndListener shiftEndListener) {
+    public void onSwipeTop(List<Cell> cells, ShiftEndListener shiftEndListener) {
         ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.TOP);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeRight(List<CellView> cells, ShiftEndListener shiftEndListener) {
+    public void onSwipeRight(List<Cell> cells, ShiftEndListener shiftEndListener) {
         ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.RIGHT);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    public void onSwipeBottom(List<CellView> cells, ShiftEndListener shiftEndListener) {
+    public void onSwipeBottom(List<Cell> cells, ShiftEndListener shiftEndListener) {
         ShiftAnimation shiftAnimation = createShiftAnimation(cells, ShiftDirection.BOTTOM);
         shiftAnimation.setShiftEndListener(shiftEndListener);
         shiftAnimation.start();
     }
 
-    private ShiftAnimation createShiftAnimation(List<CellView> sourceCells, ShiftDirection direction) {
+    private ShiftAnimation createShiftAnimation(List<Cell> sourceCells, ShiftDirection direction) {
         ShiftAnimation shiftAnimation = new ShiftAnimation(sourceCells);
-        Map<Integer, List<CellView>> cellsMap = null;
+        Map<Integer, List<Cell>> cellsMap = null;
         switch (direction) {
             case LEFT:
                 Collections.sort(sourceCells, straightComp);
@@ -150,9 +145,9 @@ public class Model {
             default:
                 break;
         }
-        Set<Map.Entry<Integer, List<CellView>>> entries = cellsMap.entrySet();
-        for (Map.Entry<Integer, List<CellView>> entry : entries) {
-            List<CellView> cells = entry.getValue();
+        Set<Map.Entry<Integer, List<Cell>>> entries = cellsMap.entrySet();
+        for (Map.Entry<Integer, List<Cell>> entry : entries) {
+            List<Cell> cells = entry.getValue();
             LineShift lineShift = new LineShift(cells, CELLS_COUNT_IN_LINE, getCellWidth());
             shiftAnimation.addLineShift(lineShift);
         }
@@ -160,11 +155,11 @@ public class Model {
         return shiftAnimation;
     }
 
-    private Map<Integer, List<CellView>> getRowCellsMap(List<CellView> cells) {
-        Map<Integer, List<CellView>> cellsMap = new HashMap<>();
-        for (CellView cell : cells) {
+    private Map<Integer, List<Cell>> getRowCellsMap(List<Cell> cells) {
+        Map<Integer, List<Cell>> cellsMap = new HashMap<>();
+        for (Cell cell : cells) {
             int row = getRow(cell.getPosition());
-            List<CellView> c = cellsMap.get(row);
+            List<Cell> c = cellsMap.get(row);
             if (c == null) {
                 c = new ArrayList<>();
                 cellsMap.put(row, c);
@@ -178,11 +173,11 @@ public class Model {
         return position / CELLS_COUNT_IN_LINE;
     }
 
-    private Map<Integer, List<CellView>> getColumnCellsMap(List<CellView> cells) {
-        Map<Integer, List<CellView>> cellsMap = new HashMap<>();
-        for (CellView cell : cells) {
+    private Map<Integer, List<Cell>> getColumnCellsMap(List<Cell> cells) {
+        Map<Integer, List<Cell>> cellsMap = new HashMap<>();
+        for (Cell cell : cells) {
             int column = getColumn(cell.getPosition());
-            List<CellView> c = cellsMap.get(column);
+            List<Cell> c = cellsMap.get(column);
             if (c == null) {
                 c = new ArrayList<>();
                 cellsMap.put(column, c);

@@ -7,12 +7,12 @@ import android.view.animation.TranslateAnimation;
  */
 public class Shift {
 
-    private CellView sourceCell;
-    private CellView destCell;
+    private Cell sourceCell;
+    private Cell destCell;
     private TranslateAnimation translateAnimation;
     private int destNumber;
 
-    Shift(CellView sourceCell, CellView destCell, int cellsCountInLine, int cellWidth) {
+    Shift(Cell sourceCell, Cell destCell, int cellsCountInLine, int cellWidth) {
         this.sourceCell = sourceCell;
         this.destCell = destCell;
         this.destNumber = getSourceNumber();
@@ -40,11 +40,11 @@ public class Shift {
         return translateAnimation;
     }
 
-    public CellView getSourceCell() {
+    public Cell getSourceCell() {
         return sourceCell;
     }
 
-    public CellView getDestCell() {
+    public Cell getDestCell() {
         return destCell;
     }
 

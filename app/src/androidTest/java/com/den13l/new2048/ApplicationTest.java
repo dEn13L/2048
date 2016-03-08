@@ -23,17 +23,17 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @SmallTest
     public void test() {
         Model model = new Model(getContext(), 1080);
-        int cellMarginPx = model.getCellMargin();
+        int cellMarginPx = model.getCellPadding();
         int innerCellPx = model.getInnerCellWidth();
 
-        ArrayList<CellView> cellViews = new ArrayList<>();
+        ArrayList<Cell> cells = new ArrayList<>();
         for (int i = 0; i < CELLS_COUNT_IN_ROW; i++) {
             for (int j = 0; j < CELLS_COUNT_IN_ROW; j++) {
-                CellView cellView = new CellView(getContext(), i, j, cellMarginPx, CELLS_COUNT_IN_ROW);
-                cellView.setLayoutParams(new TableRow.LayoutParams(innerCellPx, innerCellPx));
-                cellViews.add(cellView);
+                Cell cell = new Cell(getContext(), i, j, cellMarginPx, CELLS_COUNT_IN_ROW);
+                cell.setLayoutParams(new TableRow.LayoutParams(innerCellPx, innerCellPx));
+                cells.add(cell);
             }
         }
-        model.initValues(cellViews);
+        model.initValues(cells);
     }
 }

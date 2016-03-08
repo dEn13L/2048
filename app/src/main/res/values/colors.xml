@@ -3,4 +3,20 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="boardBackground">#FF776E65</color>
+    <color name="defaultCell">#FFBBADA0</color>
+    <color name="cell_2">#EEE4DA</color>
+    <color name="cell_4">#EEE1C9</color>
+    <color name="cell_8">#F3B27A</color>
+    <color name="cell_16">#F69664</color>
+    <color name="cell_32">#FF3333</color>
+    <color name="cell_64">#F75F3B</color>
+    <color name="cell_128">#EDD073</color>
+    <color name="cell_256">#EDCC62</color>
+    <color name="cell_512">#EDC950</color>
+    <color name="cell_1024">#EDC53F</color>
+    <color name="cell_2048">#EDC22E</color>
+    <color name="cell_more">#EDC22E</color>
+    <color name="cellTextLight">#F9F6F2</color>
+    <color name="cellTextDark">#776E65</color>
 </resources>

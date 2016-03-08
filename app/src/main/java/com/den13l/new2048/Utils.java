@@ -37,9 +37,9 @@ public class Utils {
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static CellView getValue(List<CellView> values, int position) {
-        CellView value = null;
-        for (CellView v : values) {
+    public static Cell getValue(List<Cell> values, int position) {
+        Cell value = null;
+        for (Cell v : values) {
             if (v.getPosition() == position) {
                 value = v;
                 break;

@@ -12,12 +12,12 @@ import java.util.List;
 public class ShiftAnimation implements Animation.AnimationListener {
 
     private List<LineShift> lineShifts;
-    private List<CellView> cells;
+    private List<Cell> cells;
     private ShiftEndListener shiftEndListener;
     private int activeShiftsCount;
     private int animatedShifts;
 
-    public ShiftAnimation(List<CellView> cells) {
+    public ShiftAnimation(List<Cell> cells) {
         this.lineShifts = new ArrayList<>();
         this.cells = cells;
     }
@@ -43,7 +43,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
         for (LineShift lineShift : lineShifts) {
             List<Shift> shifts = lineShift.getShiftList();
             for (Shift shift : shifts) {
-                CellView sourceCell = shift.getSourceCell();
+                Cell sourceCell = shift.getSourceCell();
                 TranslateAnimation translateAnimation = shift.getTranslateAnimation();
                 if (translateAnimation != null) {
                     activeShiftsCount++;
@@ -59,11 +59,11 @@ public class ShiftAnimation implements Animation.AnimationListener {
         }
     }
 
-    public boolean hasShiftToCell(CellView cell) {
+    public boolean hasShiftToCell(Cell cell) {
         for (LineShift lineShift : lineShifts) {
             List<Shift> shifts = lineShift.getShiftList();
             for (Shift shift : shifts) {
-                CellView destCell = shift.getDestCell();
+                Cell destCell = shift.getDestCell();
                 if (destCell.equals(cell)) {
                     return true;
                 }

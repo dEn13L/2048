@@ -8,7 +8,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.RelativeLayout.LayoutParams;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class GameActivity extends AppCompatActivity {
     public static final String TAG = "DENI";
 
     private GestureDetectorCompat detector;
-    private List<CellView> cells;
+    private List<Cell> cells;
     private Model model;
     private boolean isSwiping;
 
@@ -38,19 +37,18 @@ public class GameActivity extends AppCompatActivity {
         initBoard(backgroundBoard);
         initBoard(foregroundBoard);
 
-        CellViewAdapter cellViewAdapter = (CellViewAdapter) foregroundBoard.getAdapter();
-        cells = cellViewAdapter.getCellViews();
+        BoardAdapter boardAdapter = (BoardAdapter) foregroundBoard.getAdapter();
+        cells = boardAdapter.getCells();
         model.initCells(cells);
 
         overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
     }
 
     private void initBoard(GridView board) {
-        int cellMargin = model.getCellMargin();
         int cellsCountInRow = model.getCellsCountInLine();
 
-        CellViewAdapter cellViewAdapter = new CellViewAdapter(this, model);
-        board.setAdapter(cellViewAdapter);
+        BoardAdapter boardAdapter = new BoardAdapter(this, model);
+        board.setAdapter(boardAdapter);
         board.setNumColumns(cellsCountInRow);
         board.setOnTouchListener(new View.OnTouchListener() {
             @Override

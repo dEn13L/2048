@@ -1,11 +1,12 @@
 package com.den13l.new2048;
 
 import android.content.Context;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,53 +14,53 @@ import java.util.List;
 /**
  * Created by erdenierdyneev on 14.02.16.
  */
-public class CellViewAdapter extends BaseAdapter {
+public class BoardAdapter extends BaseAdapter {
 
-    private List<CellView> cellViews;
+    private List<Cell> cells;
     private int cellsCountInLine;
     private int count;
 
-    public CellViewAdapter(Context context, Model model) {
-        this.cellViews = new ArrayList<>();
+    public BoardAdapter(Context context, Model model) {
+        this.cells = new ArrayList<>();
         this.cellsCountInLine = model.getCellsCountInLine();
         this.count = (int) Math.pow(cellsCountInLine, 2);
         createCellViews(context, model);
     }
 
     private void createCellViews(Context context, Model model) {
+        int cellWidth = model.getCellWidth();
+        int cellHeight = model.getCellWidth();
+        int padding = model.getCellPadding();
         for (int i = 0; i < getCount(); i++) {
-            CellView cellView = new CellView(context, i);
-            cellView.setLayoutParams(new AbsListView.LayoutParams(model.getCellWidth(), model.getCellWidth()));
-            int margin = model.getCellMargin();
+            LayoutInflater inflater = LayoutInflater.from(context);
+            RelativeLayout cellView = (RelativeLayout) inflater.inflate(R.layout.cell_view, null, false);
+            cellView.setLayoutParams(new AbsListView.LayoutParams(cellWidth, cellHeight));
             if (isFirstColumn(i)) {
                 if (isFirstRaw(i)) {
-                    cellView.setPadding(margin, margin, margin / 2, margin / 2);
+                    cellView.setPadding(padding, padding, padding / 2, padding / 2);
                 } else if (isLastRaw(i)) {
-                    cellView.setPadding(margin, margin / 2, margin / 2, margin);
+                    cellView.setPadding(padding, padding / 2, padding / 2, padding);
                 } else {
-                    cellView.setPadding(margin, margin / 2, margin / 2, margin / 2);
+                    cellView.setPadding(padding, padding / 2, padding / 2, padding / 2);
                 }
             } else if (isLastColumn(i)) {
                 if (isFirstRaw(i)) {
-                    cellView.setPadding(margin / 2, margin, margin, margin / 2);
+                    cellView.setPadding(padding / 2, padding, padding, padding / 2);
                 } else if (isLastRaw(i)) {
-                    cellView.setPadding(margin / 2, margin / 2, margin, margin);
+                    cellView.setPadding(padding / 2, padding / 2, padding, padding);
                 } else {
-                    cellView.setPadding(margin / 2, margin / 2, margin, margin / 2);
+                    cellView.setPadding(padding / 2, padding / 2, padding, padding / 2);
                 }
             } else {
                 if (isFirstRaw(i)) {
-                    cellView.setPadding(margin / 2, margin, margin / 2, margin / 2);
+                    cellView.setPadding(padding / 2, padding, padding / 2, padding / 2);
                 } else if (isLastRaw(i)) {
-                    cellView.setPadding(margin / 2, margin / 2, margin / 2, margin);
+                    cellView.setPadding(padding / 2, padding / 2, padding / 2, padding);
                 } else {
-                    cellView.setPadding(margin / 2, margin / 2, margin / 2, margin / 2);
+                    cellView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
                 }
             }
-            cellViews.add(cellView);
-
-            Log.d(GameActivity.TAG, cellView.toString() + ". PADDING: " + cellView.getPaddingLeft() + ", " + cellView
-                    .getPaddingTop() + ", " + cellView.getPaddingRight() + ", " + cellView.getPaddingBottom());
+            cells.add(new Cell(cellView, i));
         }
     }
 
@@ -94,11 +95,11 @@ public class CellViewAdapter extends BaseAdapter {
         return 0;
     }
 
-    public List<CellView> getCellViews() {
-        return cellViews;
+    public List<Cell> getCells() {
+        return cells;
     }
 
     public View getView(int i, View convertView, ViewGroup parent) {
-        return convertView == null ? cellViews.get(i) : (CellView) convertView;
+        return convertView == null ? cells.get(i).getCellView() : (RelativeLayout) convertView;
     }
 }
