@@ -123,7 +123,7 @@ public class Model {
     }
 
     private ShiftAnimation createShiftAnimation(List<Cell> sourceCells, ShiftDirection direction) {
-        ShiftAnimation shiftAnimation = new ShiftAnimation(sourceCells);
+        ShiftAnimation shiftAnimation = new ShiftAnimation();
         Map<Integer, List<Cell>> cellsMap = null;
         switch (direction) {
             case LEFT:

@@ -12,14 +12,12 @@ import java.util.List;
 public class ShiftAnimation implements Animation.AnimationListener {
 
     private List<LineShift> lineShifts;
-    private List<Cell> cells;
     private ShiftEndListener shiftEndListener;
     private int activeShiftsCount;
     private int animatedShifts;
 
-    public ShiftAnimation(List<Cell> cells) {
+    public ShiftAnimation() {
         this.lineShifts = new ArrayList<>();
-        this.cells = cells;
     }
 
     @Override
