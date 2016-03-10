@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="com.den13l.new2048.GameActivity"
-                tools:showIn="@layout/activity_game">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context="com.den13l.new2048.GameActivity"
+              tools:showIn="@layout/activity_game">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/boardBackground">
 
         <TextView
             android:id="@+id/restart"
@@ -30,17 +29,23 @@
 
     </RelativeLayout>
 
-    <GridView
-        android:id="@+id/backgroundBoard"
+    <RelativeLayout
+        android:id="@+id/boardBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/cornered_rectangle"/>
+        android:background="@drawable/cornered_rectangle">
 
-    <GridView
-        android:id="@+id/foregroundBoard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        <GridView
+            android:id="@+id/backgroundBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <GridView
+            android:id="@+id/foregroundBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

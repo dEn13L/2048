@@ -24,42 +24,41 @@ public class BoardAdapter extends BaseAdapter {
         this.cells = new ArrayList<>();
         this.cellsCountInLine = model.getCellsCountInLine();
         this.count = (int) Math.pow(cellsCountInLine, 2);
-        createCellViews(context, model);
+        initCells(context, model);
     }
 
-    private void createCellViews(Context context, Model model) {
+    private void initCells(Context context, Model model) {
         int cellWidth = model.getCellWidth();
-        int cellHeight = model.getCellWidth();
         int padding = model.getCellPadding();
+        LayoutInflater inflater = LayoutInflater.from(context);
         for (int i = 0; i < getCount(); i++) {
-            LayoutInflater inflater = LayoutInflater.from(context);
             RelativeLayout cellView = (RelativeLayout) inflater.inflate(R.layout.cell_view, null, false);
-            cellView.setLayoutParams(new AbsListView.LayoutParams(cellWidth, cellHeight));
-            if (isFirstColumn(i)) {
-                if (isFirstRaw(i)) {
-                    cellView.setPadding(padding, padding, padding / 2, padding / 2);
-                } else if (isLastRaw(i)) {
-                    cellView.setPadding(padding, padding / 2, padding / 2, padding);
-                } else {
-                    cellView.setPadding(padding, padding / 2, padding / 2, padding / 2);
-                }
-            } else if (isLastColumn(i)) {
-                if (isFirstRaw(i)) {
-                    cellView.setPadding(padding / 2, padding, padding, padding / 2);
-                } else if (isLastRaw(i)) {
-                    cellView.setPadding(padding / 2, padding / 2, padding, padding);
-                } else {
-                    cellView.setPadding(padding / 2, padding / 2, padding, padding / 2);
-                }
-            } else {
-                if (isFirstRaw(i)) {
-                    cellView.setPadding(padding / 2, padding, padding / 2, padding / 2);
-                } else if (isLastRaw(i)) {
-                    cellView.setPadding(padding / 2, padding / 2, padding / 2, padding);
-                } else {
-                    cellView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
-                }
-            }
+            cellView.setLayoutParams(new AbsListView.LayoutParams(cellWidth, cellWidth));
+//            if (isFirstColumn(i)) {
+//                if (isFirstRaw(i)) {
+//                    cellView.setPadding(0, 0, padding / 2, padding / 2);
+//                } else if (isLastRaw(i)) {
+//                    cellView.setPadding(0, padding / 2, padding / 2, 0);
+//                } else {
+//                    cellView.setPadding(0, padding / 2, padding / 2, padding / 2);
+//                }
+//            } else if (isLastColumn(i)) {
+//                if (isFirstRaw(i)) {
+//                    cellView.setPadding(padding / 2, 0, 0, padding / 2);
+//                } else if (isLastRaw(i)) {
+//                    cellView.setPadding(padding / 2, padding / 2, 0, 0);
+//                } else {
+//                    cellView.setPadding(padding / 2, padding / 2, 0, padding / 2);
+//                }
+//            } else {
+//                if (isFirstRaw(i)) {
+//                    cellView.setPadding(padding / 2, 0, padding / 2, padding / 2);
+//                } else if (isLastRaw(i)) {
+//                    cellView.setPadding(padding / 2, padding / 2, padding / 2, 0);
+//                } else {
+//                    cellView.setPadding(padding / 2, padding / 2, padding / 2, padding / 2);
+//                }
+//            }
             cells.add(new Cell(cellView, i));
         }
     }
@@ -100,6 +99,11 @@ public class BoardAdapter extends BaseAdapter {
     }
 
     public View getView(int i, View convertView, ViewGroup parent) {
-        return convertView == null ? cells.get(i).getCellView() : (RelativeLayout) convertView;
+        if (convertView == null) {
+            RelativeLayout cellView = cells.get(i).getCellView();
+            return cellView;
+        } else {
+            return convertView;
+        }
     }
 }

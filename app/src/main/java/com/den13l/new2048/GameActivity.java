@@ -8,6 +8,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.util.List;
 
@@ -31,6 +33,13 @@ public class GameActivity extends AppCompatActivity {
         detector = new GestureDetectorCompat(this, new GestureListener());
         model = new Model(Utils.getDeviceWidth(this));
 
+        LinearLayout root = (LinearLayout) findViewById(R.id.root);
+        RelativeLayout boardBackground = (RelativeLayout) findViewById(R.id.boardBackground);
+
+        root.setPadding(Model.ROOT_PADDING, Model.ROOT_PADDING, Model.ROOT_PADDING, Model.ROOT_PADDING);
+        boardBackground.setPadding(Model.BOARD_BACKGROUND_PADDING, Model.BOARD_BACKGROUND_PADDING, Model
+                .BOARD_BACKGROUND_PADDING, Model.BOARD_BACKGROUND_PADDING);
+
         GridView backgroundBoard = (GridView) findViewById(R.id.backgroundBoard);
         GridView foregroundBoard = (GridView) findViewById(R.id.foregroundBoard);
 
@@ -50,6 +59,8 @@ public class GameActivity extends AppCompatActivity {
         BoardAdapter boardAdapter = new BoardAdapter(this, model);
         board.setAdapter(boardAdapter);
         board.setNumColumns(cellsCountInRow);
+        board.setHorizontalSpacing(Model.GRID_SPACING);
+        board.setVerticalSpacing(Model.GRID_SPACING);
         board.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

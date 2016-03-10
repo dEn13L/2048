@@ -22,6 +22,11 @@ public class Model {
     private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
 
+    public static final int ROOT_PADDING = 40;
+    public static final int BOARD_BACKGROUND_PADDING = 20;
+
+    public static final int GRID_SPACING = 10;
+
     private int cellPadding;
     private int cellWidth;
     private Comparator<Cell> straightComp = new Comparator<Cell>() {
@@ -41,7 +46,10 @@ public class Model {
         int idealCellWidth = deviceWidth / CELLS_COUNT_IN_LINE;
         this.cellPadding = idealCellWidth / 10;
         int boardWidth = deviceWidth - 2 * cellPadding;
-        this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
+//        this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
+        this.cellWidth = (deviceWidth - 2 * BOARD_BACKGROUND_PADDING - 2 * ROOT_PADDING - GRID_SPACING *
+                (CELLS_COUNT_IN_LINE - 1)) /
+                CELLS_COUNT_IN_LINE;
     }
 
     public int getCellWidth() {

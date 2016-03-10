@@ -39,7 +39,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
 
     public void start() {
         for (LineShift lineShift : lineShifts) {
-            List<Shift> shifts = lineShift.getShiftList();
+            List<Shift> shifts = lineShift.getShifts();
             for (Shift shift : shifts) {
                 Cell sourceCell = shift.getSourceCell();
                 TranslateAnimation translateAnimation = shift.getTranslateAnimation();
@@ -59,7 +59,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
 
     public boolean hasShiftToCell(Cell cell) {
         for (LineShift lineShift : lineShifts) {
-            List<Shift> shifts = lineShift.getShiftList();
+            List<Shift> shifts = lineShift.getShifts();
             for (Shift shift : shifts) {
                 Cell destCell = shift.getDestCell();
                 if (destCell.equals(cell)) {
