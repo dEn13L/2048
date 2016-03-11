@@ -29,7 +29,7 @@ public class BoardAdapter extends BaseAdapter {
 
     private void initCells(Context context, Model model) {
         int cellWidth = model.getCellWidth();
-        int padding = model.getCellPadding();
+        int padding = model.getGridSpacing();
         LayoutInflater inflater = LayoutInflater.from(context);
         for (int i = 0; i < getCount(); i++) {
             RelativeLayout cellView = (RelativeLayout) inflater.inflate(R.layout.cell_view, null, false);

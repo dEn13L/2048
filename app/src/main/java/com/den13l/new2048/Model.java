@@ -1,5 +1,7 @@
 package com.den13l.new2048;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -18,16 +20,14 @@ import java.util.Set;
  */
 public class Model {
 
+    public static final int ROOT_PADDING = 15; // in dp
     private final int CELLS_COUNT_IN_LINE = 4;
     private final int INITIATED_CELLS = 2;
     private final int INITIAL_SCALE = 2;
 
-    public static final int ROOT_PADDING = 40;
-    public static final int BOARD_BACKGROUND_PADDING = 20;
-
-    public static final int GRID_SPACING = 10;
-
-    private int cellPadding;
+    private Activity activity;
+    private int boardPadding;
+    private int gridSpacing;
     private int cellWidth;
     private Comparator<Cell> straightComp = new Comparator<Cell>() {
         @Override
@@ -42,22 +42,38 @@ public class Model {
         }
     };
 
-    public Model(int deviceWidth) {
-        int idealCellWidth = deviceWidth / CELLS_COUNT_IN_LINE;
-        this.cellPadding = idealCellWidth / 10;
-        int boardWidth = deviceWidth - 2 * cellPadding;
-//        this.cellWidth = boardWidth / CELLS_COUNT_IN_LINE;
-        this.cellWidth = (deviceWidth - 2 * BOARD_BACKGROUND_PADDING - 2 * ROOT_PADDING - GRID_SPACING *
-                (CELLS_COUNT_IN_LINE - 1)) /
-                CELLS_COUNT_IN_LINE;
+    public Model(Activity activity) {
+        this.activity = activity;
+        int deviceWidth = Utils.getDeviceWidth(activity);
+        int rootPadding = getRootPadding(activity);
+        int boardWidth = deviceWidth - 2 * rootPadding;
+        int maxCellWidth = boardWidth / CELLS_COUNT_IN_LINE;
+        this.gridSpacing = maxCellWidth / 10;
+        int noCellsSpaceSum = (CELLS_COUNT_IN_LINE + 1) * gridSpacing;
+        this.cellWidth = (boardWidth - noCellsSpaceSum) / CELLS_COUNT_IN_LINE;
+        int cellWidthSum = CELLS_COUNT_IN_LINE * cellWidth;
+        int betweenCellsSpaceSum = (CELLS_COUNT_IN_LINE - 1) * gridSpacing;
+        this.boardPadding = (boardWidth - cellWidthSum - betweenCellsSpaceSum) / 2;
     }
 
     public int getCellWidth() {
         return cellWidth;
     }
 
-    public int getCellPadding() {
-        return cellPadding;
+    public int getRootPadding(Context context) {
+        return Utils.dpToPx(context, ROOT_PADDING);
+    }
+
+    public int getGridSpacing(Context context) {
+        return gridSpacing;
+    }
+
+    public int getBoardPadding() {
+        return boardPadding;
+    }
+
+    public int getGridSpacing() {
+        return gridSpacing;
     }
 
     public int getCellsCountInLine() {

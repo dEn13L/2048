@@ -23,7 +23,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @SmallTest
     public void test() {
         Model model = new Model(getContext(), 1080);
-        int cellMarginPx = model.getCellPadding();
+        int cellMarginPx = model.getGridSpacing();
         int innerCellPx = model.getInnerCellWidth();
 
         ArrayList<Cell> cells = new ArrayList<>();
