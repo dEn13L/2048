@@ -12,7 +12,7 @@ public class Shift {
     private TranslateAnimation translateAnimation;
     private int destNumber;
 
-    Shift(Cell sourceCell, Cell destCell, int cellsCountInLine, int cellWidth) {
+    public Shift(Cell sourceCell, Cell destCell, int cellsCountInLine, int cellWidth) {
         this.sourceCell = sourceCell;
         this.destCell = destCell;
         this.destNumber = getSourceNumber();

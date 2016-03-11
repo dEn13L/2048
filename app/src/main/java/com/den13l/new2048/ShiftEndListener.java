@@ -7,5 +7,5 @@ import java.util.List;
  */
 public interface ShiftEndListener {
 
-    void onShifted(boolean isShifted);
+    void onShifted(int destNumbersSum, boolean isShifted);
 }

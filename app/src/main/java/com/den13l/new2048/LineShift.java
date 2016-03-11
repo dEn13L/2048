@@ -12,6 +12,7 @@ public class LineShift {
     private List<Shift> shifts;
     private int cellsCountInLine;
     private int cellWidth;
+    private int score;
 
     public LineShift(List<Cell> cellList, int cellsCountInLine, int cellWidth) {
         this.cellList = cellList;
@@ -28,6 +29,10 @@ public class LineShift {
             stringBuilder.append(shift.toString()).append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public List<Shift> getShifts() {
@@ -83,6 +88,7 @@ public class LineShift {
                 int doubleDestNumber = 2 * mergeShift.getDestNumber();
                 shift.setDestNumber(doubleDestNumber);
                 mergeShift.setDestNumber(doubleDestNumber);
+                score += doubleDestNumber;
                 break;
             }
         }

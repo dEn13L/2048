@@ -15,6 +15,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
     private ShiftEndListener shiftEndListener;
     private int activeShiftsCount;
     private int animatedShifts;
+    private int scoreSum;
 
     public ShiftAnimation() {
         this.lineShifts = new ArrayList<>();
@@ -39,6 +40,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
 
     public void start() {
         for (LineShift lineShift : lineShifts) {
+            scoreSum += lineShift.getScore();
             List<Shift> shifts = lineShift.getShifts();
             for (Shift shift : shifts) {
                 Cell sourceCell = shift.getSourceCell();
@@ -53,7 +55,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
             }
         }
         if (activeShiftsCount == 0 && shiftEndListener != null) {
-            shiftEndListener.onShifted(false);
+            shiftEndListener.onShifted(0, false);
         }
     }
 
@@ -79,7 +81,7 @@ public class ShiftAnimation implements Animation.AnimationListener {
     public void onAnimationEnd(Animation animation) {
         animatedShifts++;
         if (animatedShifts == activeShiftsCount && shiftEndListener != null) {
-            shiftEndListener.onShifted(true);
+            shiftEndListener.onShifted(scoreSum, true);
         }
     }
 

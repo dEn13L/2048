@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class GameActivity extends AppCompatActivity {
     private List<Cell> cells;
     private Model model;
     private boolean isSwiping;
+    private TextView score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +37,16 @@ public class GameActivity extends AppCompatActivity {
         detector = new GestureDetectorCompat(this, new GestureListener());
         model = new Model(this);
 
+        score = (TextView) findViewById(R.id.score);
+
         LinearLayout root = (LinearLayout) findViewById(R.id.root);
         RelativeLayout boardBackground = (RelativeLayout) findViewById(R.id.boardBackground);
 
         int rootPadding = model.getRootPadding(this);
         root.setPadding(rootPadding, rootPadding, rootPadding, rootPadding);
 
-        int boardBackgroundPadding = model.getBoardPadding();
-        boardBackground.setPadding(boardBackgroundPadding, boardBackgroundPadding, boardBackgroundPadding, boardBackgroundPadding);
+        int boardPadding = model.getBoardPadding();
+        boardBackground.setPadding(boardPadding, boardPadding, boardPadding, boardPadding);
 
         GridView backgroundBoard = (GridView) findViewById(R.id.backgroundBoard);
         GridView foregroundBoard = (GridView) findViewById(R.id.foregroundBoard);
@@ -57,7 +63,6 @@ public class GameActivity extends AppCompatActivity {
 
     private void initBoard(GridView board) {
         int cellsCountInRow = model.getCellsCountInLine();
-
         int gridSpacing = model.getGridSpacing(this);
 
         BoardAdapter boardAdapter = new BoardAdapter(this, model);
@@ -84,11 +89,14 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "left swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(boolean isShifted) {
+            public void onShifted(int destNumbersSum, boolean isShifted) {
                 isSwiping = false;
                 if (isShifted) {
                     model.initCells(cells, 1);
                 }
+                String scoreText = (String) score.getText();
+                int scoreNumber = Integer.valueOf(scoreText) + destNumbersSum;
+                score.setText(String.valueOf(scoreNumber));
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -102,11 +110,14 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "top swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(boolean isShifted) {
+            public void onShifted(int destNumbersSum, boolean isShifted) {
                 isSwiping = false;
                 if (isShifted) {
                     model.initCells(cells, 1);
                 }
+                String scoreText = (String) score.getText();
+                int scoreNumber = Integer.valueOf(scoreText) + destNumbersSum;
+                score.setText(String.valueOf(scoreNumber));
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -120,11 +131,14 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "right swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(boolean isShifted) {
+            public void onShifted(int destNumbersSum, boolean isShifted) {
                 isSwiping = false;
                 if (isShifted) {
                     model.initCells(cells, 1);
                 }
+                String scoreText = (String) score.getText();
+                int scoreNumber = Integer.valueOf(scoreText) + destNumbersSum;
+                score.setText(String.valueOf(scoreNumber));
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
@@ -138,11 +152,14 @@ public class GameActivity extends AppCompatActivity {
         Log.d(TAG, "bottom swipe. " + cells.toString());
         ShiftEndListener shiftEndListener = new ShiftEndListener() {
             @Override
-            public void onShifted(boolean isShifted) {
+            public void onShifted(int destNumbersSum, boolean isShifted) {
                 isSwiping = false;
                 if (isShifted) {
                     model.initCells(cells, 1);
                 }
+                String scoreText = (String) score.getText();
+                int scoreNumber = Integer.valueOf(scoreText) + destNumbersSum;
+                score.setText(String.valueOf(scoreNumber));
                 Log.d(TAG, "onShifted. " + cells.toString());
             }
         };
